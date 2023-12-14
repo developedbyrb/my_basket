@@ -66,7 +66,12 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $role = Role::find($id);
+        if (!$role) {
+            return response()->json(['message' => 'Role not found.'], 404);
+        }
+        $role->delete();
+        return response()->json(['message' => 'Role deleted successfully.']);
     }
 
     /**
@@ -74,6 +79,16 @@ class RoleController extends Controller
      */
     public function upSert(Request $request)
     {
-        dd($request);
+        $request->validate([
+            'name' => 'required|string|max:255'
+        ]);
+        $category = Role::updateOrCreate([
+            'name' => $request->input('name')
+        ]);
+        return response()->json([
+            'success' => true,
+            'data' => $category,
+            'message' => 'Created Successfully.'
+        ]);
     }
 }

@@ -26,7 +26,7 @@
             </div>
         </div>
         <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-            <button type="button"
+            <button type="button" id="confirmDelete"
                 class="modal-button border-transparent bg-red-600 text-white hover:bg-red-700 focus:ring-red-500">
                 Deactivate
             </button>

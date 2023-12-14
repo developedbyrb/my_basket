@@ -12,6 +12,9 @@ window.$ = jQuery;
 
 $(document).ready(function () {
     $('.openModal').on('click', function (e) {
+        e.preventDefault();
+        const id = $(this).data('id');
+        $('#confirmDelete').attr('data-id', id)
         $('#removeRole').removeClass('invisible');
     });
     $('.closeModal').on('click', function (e) {

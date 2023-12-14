@@ -44,7 +44,7 @@
                                                             {{ __('Edit Role') }}
                                                         </x-secondary-button>
                                                         @if ($role->name !== 'Admin')
-                                                            <x-danger-button class="openModal">
+                                                            <x-danger-button class="openModal" data-id="{{ $role->id }}">
                                                                 {{ __('Remove Role') }}
                                                             </x-danger-button>
                                                         @endif
@@ -121,6 +121,26 @@
                     upsertRole(formData);
                 }
             });
+
+            $('#confirmDelete').on('click', function(e) {
+                const roleId = $(this).data('id');
+                let getRoleURL = "{{ route('roles.destroy', ':id') }}";
+                getRoleURL = getRoleURL.replace(':id', roleId);
+                $.ajax({
+                    url: getRoleURL,
+                    type: 'DELETE',
+                    dataType: 'json',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                    },
+                    success: function(response) {
+                        $("#removeRole .closeModal").click();
+                    },
+                    error: function(data) {
+                        console.log(data);
+                    }
+                });
+            });
         });
 
         function getRoleDetails(roleId) {
@@ -154,16 +174,19 @@
         function upsertRole(data) {
             setupAjax();
             $.ajax({
-                url: "{{ route('role.upsert') }}",
+                url: "{{ route('roles.upsert') }}",
                 type: 'POST',
                 data: data,
                 success: function(data) {
-                    // handle success
+                    hideModal();
                 },
                 error: function(data) {
-                    // handle error
                 }
             });
+        }
+
+        function hideModal() {
+            $('#upsertRole #closeUpsert').click();
         }
 
         function setupAjax() {

@@ -34,7 +34,7 @@ Route::middleware('auth')->group(function () {
         'roles' => RoleController::class
     ]);
 
-    Route::post('roles/upsert', [RoleController::class, 'upSert'])->name('role.upsert');
+    Route::post('roles/upsert', [RoleController::class, 'upSert'])->name('roles.upsert');
 });
 
 require __DIR__ . '/auth.php';
