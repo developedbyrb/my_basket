@@ -44,7 +44,8 @@
                                                             {{ __('Edit Role') }}
                                                         </x-secondary-button>
                                                         @if ($role->name !== 'Admin')
-                                                            <x-danger-button class="openModal" data-id="{{ $role->id }}">
+                                                            <x-danger-button class="openModal"
+                                                                data-id="{{ $role->id }}">
                                                                 {{ __('Remove Role') }}
                                                             </x-danger-button>
                                                         @endif
@@ -79,9 +80,24 @@
     </div>
 @endsection
 
-@push('scripts')
+@push('page-script')
     <script type="module">
         $(document).ready(function() {
+            $('.openModal').on('click', function(e) {
+                e.preventDefault();
+                const id = $(this).data('id');
+                $('#confirmDelete').attr('data-id', id)
+                $('#removeRole').removeClass('invisible');
+            });
+
+            $('.closeModal').on('click', function(e) {
+                $('#removeRole').addClass('invisible');
+            });
+
+            $('#closeUpsert').on('click', function(e) {
+                $('#upsertRole').addClass('invisible');
+            });
+
             $('.openUpsertModal').on('click', function(e) {
                 $('#roleForm')[0].reset();
                 const roleId = $(this).data('current_role');
@@ -180,8 +196,7 @@
                 success: function(data) {
                     hideModal();
                 },
-                error: function(data) {
-                }
+                error: function(data) {}
             });
         }
 
