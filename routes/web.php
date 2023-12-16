@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\RolePermissionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,10 +34,19 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::resources([
-        'roles' => RoleController::class
+        'roles' => RoleController::class,
+        'permissions' => PermissionController::class
     ]);
 
-    Route::post('roles/upsert', [RoleController::class, 'upSert'])->name('roles.upsert');
+    Route::get('/access-management', [RolePermissionController::class, 'showMatrix'])->name('matrix.show');
+    Route::post('/roles/upsert', [RoleController::class, 'upSert'])->name('roles.upsert');
 });
+
+Route::get('/categories', [CategoryController::class, 'index'])->middleware('check_permission:create-category');
+// Route::middleware(['auth', 'check_permission:create-category'])->group(function () {
+//     Route::prefix('categories')->group(function () {
+//         Route::get('', [CategoryController::class, 'index'])->name('category.index');
+//     });
+// });
 
 require __DIR__ . '/auth.php';

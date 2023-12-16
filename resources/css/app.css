@@ -168,3 +168,11 @@ span.flatpickr-weekday,
 [x-cloak] {
     display: none !important;
 }
+
+.custom-modal {
+    @apply inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full;
+}
+
+.custom-modal-wrapper {
+    @apply fixed z-10 inset-0 overflow-y-auto;
+}
