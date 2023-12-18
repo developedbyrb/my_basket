@@ -47,6 +47,9 @@
                             </td>
                             <td class="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                 <div class="flex items-center space-x-3.5">
+                                    <button class="hover:text-primary open-update-role-modal" data-id="{{ $role->id }}">
+                                        <x-edit />
+                                    </button>
                                     <button data-modal-target="popup-modal" data-modal-toggle="popup-modal"
                                         class="hover:text-primary" data-id="{{ $role->id }}">
                                         <x-remove />
@@ -107,7 +110,7 @@
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                 <!-- Modal header -->
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    <h3 class="modal-title text-lg font-semibold text-gray-900 dark:text-white">
                         Create New Role
                     </h3>
                     <button type="button"
@@ -122,7 +125,7 @@
                     </button>
                 </div>
                 <!-- Modal body -->
-                <form class="p-4 md:p-5">
+                <form class="p-4 md:p-5" id="#roleForm">
                     <div class="grid gap-4 mb-4 grid-cols-2">
                         <div class="col-span-2">
                             <label for="name"
@@ -149,23 +152,22 @@
 @push('page-script')
     <script type="module">
         $(document).ready(function() {
-            $('.openModal').on('click', function(e) {
+            $('.open-update-role-modal').on('click', function(e) {
                 e.preventDefault();
-                const id = $(this).data('id');
-                $('#confirmDelete').attr('data-id', id)
-                $('#removeRole').removeClass('invisible');
+                const roleId = $(this).data('id');
+                getRoleDetails(roleId);
             });
 
-            $('.openUpsertModal').on('click', function(e) {
-                $('#roleForm')[0].reset();
-                const roleId = $(this).data('current_role');
-                if (roleId) {
-                    getRoleDetails(roleId);
-                } else {
-                    $('#upsertRole #modal-title').html('Create Role');
-                    $('#upsertRole').removeClass('invisible');
-                }
-            });
+            // $('.openUpsertModal').on('click', function(e) {
+            //     $('#roleForm')[0].reset();
+            //     const roleId = $(this).data('current_role');
+            //     if (roleId) {
+            //         getRoleDetails(roleId);
+            //     } else {
+            //         $('#upsertRole #modal-title').html('Create Role');
+            //         $('#upsertRole').removeClass('invisible');
+            //     }
+            // });
 
             $('#submitUpsert').on('click', function(e) {
                 $("#roleForm").validate({
@@ -217,6 +219,12 @@
             });
         });
 
+        function setFormValues(form, formData) {
+            $.each(formData, function(key, value) {
+                $('#' + form + ' [name="' + key + '"]').val(value);
+            });
+        }
+
         function getRoleDetails(roleId) {
             let getRoleURL = "{{ route('roles.show', ':id') }}";
             getRoleURL = getRoleURL.replace(':id', roleId);
@@ -227,12 +235,13 @@
                 url: getRoleURL,
                 success: function(data) {
                     $('#roleForm #role').val(data.name);
-                    $('#upsertRole #modal-title').html('Edit Role');
-                    $('#upsertRole').removeClass('invisible');
+                    $('#crud-modal .modal-title').html('Edit Role');
+                    const $modalElement = document.querySelector('#crud-modal');
+                    const modal = new Modal($modalElement);
+                    modal.show();
                 },
                 error: function(data) {
                     console.error('Custom Error', data);
-                    $('#removeRole').addClass('invisible');
                 }
             });
         }

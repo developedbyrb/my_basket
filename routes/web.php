@@ -2,9 +2,12 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\ShopController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,8 +37,11 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::resources([
+        'users' => UserController::class,
         'roles' => RoleController::class,
-        'permissions' => PermissionController::class
+        'permissions' => PermissionController::class,
+        'products' => ProductController::class,
+        'shops' => ShopController::class
     ]);
 
     Route::get('/access-management', [RolePermissionController::class, 'showMatrix'])->name('matrix.show');
@@ -43,10 +49,5 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/categories', [CategoryController::class, 'index'])->middleware('check_permission:create-category');
-// Route::middleware(['auth', 'check_permission:create-category'])->group(function () {
-//     Route::prefix('categories')->group(function () {
-//         Route::get('', [CategoryController::class, 'index'])->name('category.index');
-//     });
-// });
 
 require __DIR__ . '/auth.php';

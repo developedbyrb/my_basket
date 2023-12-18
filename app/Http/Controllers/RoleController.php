@@ -13,11 +13,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        if (Auth::user()->role_id === 1) {
-            $roles = Role::get();
-        } else {
-            $roles = Role::where('name', '<>', 'Admin')->get();
-        }
+        $roles = Role::where('name', '<>', 'Admin')->get();
         return view('role.index', compact("roles"));
     }
 
