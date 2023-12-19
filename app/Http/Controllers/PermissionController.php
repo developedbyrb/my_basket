@@ -10,18 +10,21 @@ class PermissionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $permissions = Permission::get();
+        if ($request->ajax()) {
+            $returnHTML = view('permission.partials.tableRows')->with('permissions', $permissions)->render();
+            $response = [
+                'success' => true,
+                'data' => [
+                    'html' => $returnHTML
+                ],
+                'message' => 'Permissions list fetched successfully.'
+            ];
+            return response($response);
+        }
         return view('permission.index', compact('permissions'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -30,14 +33,14 @@ class PermissionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255'
+            'name' => 'required|string|max:255|unique:permissions'
         ]);
 
         Permission::create(['name' => $request->input('name')]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Created Successfully.'
+            'message' => 'Permission created Successfully.'
         ]);
     }
 
@@ -54,7 +57,14 @@ class PermissionController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        if (Permission::findOrFail($id)) {
+            $data = [
+                'permission' => Permission::findOrFail($id)
+            ];
+            return response(['success' => true, 'data' => $data, 'message' => 'Permission data found successfully.']);
+        } else {
+            return response(['success' => false, 'data' => [], 'message' => 'Permission not found.']);
+        }
     }
 
     /**
@@ -62,7 +72,20 @@ class PermissionController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $permission = Permission::find($id);
+        if ($permission) {
+            $request->validate([
+                'name' => 'required|string|unique:permissions,name,' . $id
+            ]);
+
+            $permission->update([
+                'name' => $request->input('name')
+            ]);
+
+            return response(['message' => 'Permission Updated Successfully', 'success' => true]);
+        } else {
+            return response(['message' => 'Permission not found', 'success' => false], 404);
+        }
     }
 
     /**
@@ -70,5 +93,11 @@ class PermissionController extends Controller
      */
     public function destroy(string $id)
     {
+        $permission = Permission::find($id);
+        if (!$permission) {
+            return response()->json(['message' => 'Permission not found.'], 404);
+        }
+        $permission->delete();
+        return response()->json(['message' => 'Permission deleted successfully.']);
     }
 }

@@ -30,24 +30,34 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::prefix('profile')->group(function () {
-        Route::get('', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::patch('', [ProfileController::class, 'update'])->name('profile.update');
-        Route::delete('', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    });
-
     Route::resources([
         'users' => UserController::class,
-        'roles' => RoleController::class,
         'permissions' => PermissionController::class,
         'products' => ProductController::class,
         'shops' => ShopController::class
     ]);
 
-    Route::get('/access-management', [RolePermissionController::class, 'showMatrix'])->name('matrix.show');
-    Route::post('/roles/upsert', [RoleController::class, 'upSert'])->name('roles.upsert');
+    Route::resource('access-management', RolePermissionController::class)->only(['index', 'store'])->middleware([
+        'index' => 'check_permission:get-access',
+        'store' => 'check_permission:save-access'
+    ]);
+
+    Route::resource('roles', RoleController::class)->except(['create'])->middleware([
+        'index' => 'check_permission:get-roles',
+        'store' => 'check_permission:save-roles',
+        'edit' => 'check_permission:edit-roles',
+        'update' => 'check_permission:update-roles',
+        'destroy' => 'check_permission:delete-roles',
+    ]);
+
+    Route::resource('categories', CategoryController::class)->except(['create'])->middleware([
+        'index' => 'check_permission:get-categories',
+        'store' => 'check_permission:save-categories',
+        'edit' => 'check_permission:edit-categories',
+        'update' => 'check_permission:update-categories',
+        'destroy' => 'check_permission:delete-categories',
+    ]);
 });
 
-Route::get('/categories', [CategoryController::class, 'index'])->middleware('check_permission:create-category');
 
 require __DIR__ . '/auth.php';

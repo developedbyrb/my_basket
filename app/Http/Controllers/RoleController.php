@@ -11,18 +11,21 @@ class RoleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $roles = Role::where('name', '<>', 'Admin')->get();
-        return view('role.index', compact("roles"));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $roles = Role::get();
+        if ($request->ajax()) {
+            $returnHTML = view('role.partials.tableRows')->with('roles', $roles)->render();
+            $response = [
+                'success' => true,
+                'data' => [
+                    'html' => $returnHTML
+                ],
+                'message' => 'Roles list fetched successfully.'
+            ];
+            return response($response);
+        }
+        return view('role.index', compact('roles'));
     }
 
     /**
@@ -30,7 +33,15 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255|unique:roles'
+        ]);
+
+        Role::create([
+            'name' => $request->input('name')
+        ]);
+
+        return response(['message' => 'Role created Successfully', 'success' => true]);
     }
 
     /**
@@ -46,7 +57,14 @@ class RoleController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        if (Role::findOrFail($id)) {
+            $data = [
+                'role' => Role::findOrFail($id)
+            ];
+            return response(['success' => true, 'data' => $data, 'message' => 'Role data found successfully.']);
+        } else {
+            return response(['success' => false, 'data' => [], 'message' => 'Role not found.']);
+        }
     }
 
     /**
@@ -54,7 +72,20 @@ class RoleController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $role = Role::find($id);
+        if ($role) {
+            $request->validate([
+                'name' => 'required|string|unique:roles,name,' . $id
+            ]);
+
+            $role->update([
+                'name' => $request->input('name')
+            ]);
+
+            return response(['message' => 'Role Updated Successfully', 'success' => true]);
+        } else {
+            return response(['message' => 'Role not found', 'success' => false], 404);
+        }
     }
 
     /**
@@ -68,23 +99,5 @@ class RoleController extends Controller
         }
         $role->delete();
         return response()->json(['message' => 'Role deleted successfully.']);
-    }
-
-    /**
-     * Create Or Update Role
-     */
-    public function upSert(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255'
-        ]);
-        $category = Role::updateOrCreate([
-            'name' => $request->input('name')
-        ]);
-        return response()->json([
-            'success' => true,
-            'data' => $category,
-            'message' => 'Created Successfully.'
-        ]);
     }
 }
