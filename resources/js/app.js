@@ -12,8 +12,6 @@ Alpine.plugin(persist)
 window.Alpine = Alpine;
 Alpine.start();
 
-
-
 $(document).ready(function () {
     const supportedFilesExtensions = ['image/jpeg', 'image/png'];
     //custom validation rules

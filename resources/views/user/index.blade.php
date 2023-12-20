@@ -331,7 +331,11 @@
                     hideModal('crud');
                     getUserList();
                     if (userId) {
-                        $('#userForm').removeData("user-id");
+                        <<
+                        << << < HEAD
+                        $('#userForm').removeData("user-id"); ===
+                        === = >>>
+                        >>> > 39e37772 cc1dee34eaf14b5bd834508a054a671b
                         $('#putMethod').remove();
                     }
                 },

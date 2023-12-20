@@ -50,7 +50,7 @@
                                     href="javascript:void(0)" @click.prevent="selected = (selected === 'RAP' ? '':'RAP')"
                                     :class="{
                                         'bg-graydark dark:bg-meta-4': (selected === 'RAP') || (
-                                            page === 'roles') ||
+                                                page === 'roles') ||
                                             (page === 'access-management')
                                     }">
                                     <x-forms />
