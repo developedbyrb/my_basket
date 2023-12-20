@@ -2,8 +2,9 @@
     class="absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-black duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0"
     @click.outside="sidebarToggle = false">
     <div class="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
-        <a href="{{ route('dashboard') }}" @click="selected = (selected === 'Dashboard' ? '':'Dashboard')">
-            <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+        <a href="{{ route('dashboard') }}" class="flex w-11/12"
+            @click="selected = (selected === 'Dashboard' ? '':'Dashboard')">
+            <x-application-logo class="block h-12 w-50" />
         </a>
 
         <button class="block lg:hidden" @click.stop="sidebarToggle = !sidebarToggle">
@@ -29,52 +30,94 @@
                         </a>
                     </li>
 
-                    <li>
-                        <a class="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
-                            href="{{ route('dashboard') }}"
-                            @click="selected = (selected === 'User Management' ? '':'Dashboard')"
-                            :class="{ 'bg-graydark dark:bg-meta-4': (selected === 'User Management') && (page === 'dashboard') }">
-                            <x-users-svg />
-                            User Management
-                        </a>
-                    </li>
+                    @auth
+                        <li>
+                            <a class="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
+                                href="{{ route('users.index') }}"
+                                @click="selected = (selected === 'User Management' ? '':'User Management')"
+                                :class="{
+                                    'bg-graydark dark:bg-meta-4': (selected === 'User Management') && (
+                                        page === 'dashboard')
+                                }">
+                                <x-users-svg />
+                                User Management
+                            </a>
+                        </li>
 
-                    <!-- Menu Item RAP -->
-                    <li>
-                        <a class="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
-                            href="javascript:void(0)" @click.prevent="selected = (selected === 'RAP' ? '':'RAP')"
-                            :class="{
-                                'bg-graydark dark:bg-meta-4': (selected === 'RAP') || (page === 'roles') || (
-                                    page === 'access-management')
-                            }">
-                            <x-forms />
-                            Role Access Panel
-                            <x-aero />
-                        </a>
+                        @if (auth()->user()->role->id === 1)
+                            <li>
+                                <a class="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
+                                    href="javascript:void(0)" @click.prevent="selected = (selected === 'RAP' ? '':'RAP')"
+                                    :class="{
+                                        'bg-graydark dark:bg-meta-4': (selected === 'RAP') || (
+                                            page === 'roles') ||
+                                            (page === 'access-management')
+                                    }">
+                                    <x-forms />
+                                    Role Access Panel
+                                    <x-aero />
+                                </a>
 
-                        <div class="overflow-hidden" :class="(selected === 'RAP') ? 'block' : 'hidden'">
-                            <ul class="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                                <li>
-                                    <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('roles.index') ? 'text-white' : '' }}"
-                                        href="{{ route('roles.index') }}">
-                                        Role Management
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('permissions.index') ? 'text-white' : '' }}"
-                                        href="{{ route('permissions.index') }}">
-                                        Permission Management
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('matrix.show') ? 'text-white' : '' }}"
-                                        href="{{ route('matrix.show') }}">
-                                        AccessScope Matrix
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
+                                <div class="overflow-hidden" :class="(selected === 'RAP') ? 'block' : 'hidden'">
+                                    <ul class="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                                        <li>
+                                            <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('roles.index') ? 'text-white' : '' }}"
+                                                href="{{ route('roles.index') }}">
+                                                Role Management
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('permissions.index') ? 'text-white' : '' }}"
+                                                href="{{ route('permissions.index') }}">
+                                                Permission Management
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('access-management.index') ? 'text-white' : '' }}"
+                                                href="{{ route('access-management.index') }}">
+                                                AccessScope Matrix
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        @endif
+
+                        <li>
+                            <a class="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
+                                href="javascript:void(0)" @click.prevent="selected = (selected === 'Shop' ? '':'Shop')"
+                                :class="{
+                                    'bg-graydark dark:bg-meta-4': (selected === 'Shop')
+                                }">
+                                <x-shopping-svg />
+                                E-Commerce Management
+                                <x-aero />
+                            </a>
+
+                            <div class="overflow-hidden" :class="(selected === 'Shop') ? 'block' : 'hidden'">
+                                <ul class="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                                    <li>
+                                        <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('categories.index') ? 'text-white' : '' }}"
+                                            href="{{ route('categories.index') }}">
+                                            Category Management
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('products.index') ? 'text-white' : '' }}"
+                                            href="{{ route('products.index') }}">
+                                            Product Management
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('shops.index') ? 'text-white' : '' }}"
+                                            href="{{ route('shops.index') }}">
+                                            Shop Management
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    @endauth
                 </ul>
             </div>
         </nav>

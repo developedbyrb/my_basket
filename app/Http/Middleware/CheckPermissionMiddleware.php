@@ -15,7 +15,7 @@ class CheckPermissionMiddleware
      */
     public function handle(Request $request, Closure $next, $permission): Response
     {
-        if (auth()->user() && auth()->user()->role && auth()->user()->role->permissions->contains('name', $permission)) {
+        if (auth()->user() && auth()->user()->role && auth()->user()->role->permissions->contains('name', $permission) || auth()->user() && auth()->user()->role && auth()->user()->role->id === 1) {
             return $next($request);
         }
 
