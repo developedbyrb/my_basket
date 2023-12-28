@@ -15,7 +15,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::get();
+        $users = User::latest()->get();
         if ($request->ajax()) {
             $returnHTML = view('user.partials.tableRows')->with('users', $users)->render();
             $response = [

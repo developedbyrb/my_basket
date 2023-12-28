@@ -22,7 +22,16 @@ $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(valu
         @include('layouts.sidebar')
         <div class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
             @include('layouts.header')
-            @include('layouts.toasters')
+            @include('layouts.toasters.jsToaster')
+
+            {{-- session toaster --}}
+            @if (session('alert-success'))
+                @include('layouts.toasters.success', ['message' => session('alert-success')])
+            @endif
+            @if (session('alert-error'))
+                @include('layouts.toasters.danger', ['message' => session('alert-error')])
+            @endif
+            {{-- session toaster ends --}}
             <main>
                 <div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
                     @yield('content')

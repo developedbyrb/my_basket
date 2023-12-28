@@ -12,6 +12,8 @@ Alpine.plugin(persist)
 window.Alpine = Alpine;
 Alpine.start();
 
+
+
 $(document).ready(function () {
     const supportedFilesExtensions = ['image/jpeg', 'image/png'];
     //custom validation rules
@@ -30,6 +32,10 @@ $(document).ready(function () {
         return true;
     });
 
+    $.validator.addMethod('pinCode', function (value) {
+        return /^[1-9]{1}\d{2}\s?\d{3}$/.test(value);
+    });
+
     jQuery.extend(jQuery.validator.messages, {
         required: "This field is required.",
         remote: "Please fix this field.",
@@ -46,7 +52,8 @@ $(document).ready(function () {
         range: jQuery.validator.format("Please enter a value between {0} and {1}."),
         max: jQuery.validator.format("Please enter a value less than or equal to {0}."),
         min: jQuery.validator.format("Please enter a value greater than or equal to {0}."),
-        fileExtension: "Please upload file in these format only (jpg, jpeg, png)."
+        fileExtension: "Please upload file in these format only (jpg, jpeg, png).",
+        pinCode: "Please enter a valid pincode."
     });
 
     $("#registrationForm").validate({
@@ -144,3 +151,9 @@ $(document).ready(function () {
         }
     });
 });
+
+setTimeout(function () {
+    $('#toast-success').fadeOut('fast');
+    $('#toast-danger').fadeOut('fast');
+    $('#toast-warning').fadeOut('fast');
+}, 5000);

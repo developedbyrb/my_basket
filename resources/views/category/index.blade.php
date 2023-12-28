@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="w-full flex flex-row-reverse">
-        @if (auth()->user()->role->id === 1)
+        @if (\Helper::hasPermissionToView('create-categories'))
             <button class="custom-create-button open-category-modal" type="button" data-id="">
                 <x-plus-svg />
                 {{ __('Create Category') }}
@@ -23,9 +23,11 @@
                         <th class="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
                             Create At
                         </th>
-                        <th class="py-4 px-4 font-medium text-black dark:text-white">
-                            Actions
-                        </th>
+                        @if (\Helper::hasPermissionToView('edit-categories') || \Helper::hasPermissionToView('delete-categories'))
+                            <th class="py-4 px-4 font-medium text-black dark:text-white">
+                                Actions
+                            </th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody id="categoryTableBody">
@@ -73,7 +75,7 @@
         <div class="relative p-4 w-full max-w-md     max-h-full">
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                    <h3 class="modal-title text-lg font-semibold text-gray-900 dark:text-white">
+                    <h3 class="modal-title text-lg font-semibold text-gray-900 dark:text-white" id="modal-title">
                         Create New Category
                     </h3>
                     <button type="button" class="close-modal-icon">
@@ -85,8 +87,7 @@
                     <form class="p-4 md:p-5" id="categoryForm">
                         <div class="grid gap-4 mb-4 grid-cols-2">
                             <div class="col-span-2 form-group">
-                                <label for="name"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
+                                <label for="name" class="form-label">Name<span style="color:red"> *</span></label>
                                 <input type="text" name="name" id="name" class="custom-input-text"
                                     placeholder="Type category name">
                             </div>
@@ -121,6 +122,7 @@
             if (categoryId) {
                 getCategoryDetails(categoryId);
             } else {
+                $('#modal-title').html('Create New Category');
                 const $modalElement = document.querySelector('#crud-modal');
                 const modal = new Modal($modalElement);
                 modal.show();
@@ -212,6 +214,9 @@
                         const inputName = $(input).attr('name');
                         $(input).val(categoryData[inputName]);
                     });
+
+                    $('#modal-title').html('Edit Category Details');
+
                     const $modalElement = document.querySelector('#crud-modal');
                     const modal = new Modal($modalElement);
                     modal.show();

@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="w-full flex flex-row-reverse">
-        @if (auth()->user()->role->id === 1)
+        @if (\Helper::hasPermissionToView('create-permissions'))
             <button class="custom-create-button open-permission-modal" type="button" data-id="">
                 <x-plus-svg />
                 {{ __('Create Permission') }}
@@ -23,7 +23,7 @@
                         <th class="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
                             Create At
                         </th>
-                        @if (auth()->user()->role->id === 1)
+                        @if (\Helper::hasPermissionToView('edit-permissions') || \Helper::hasPermissionToView('delete-permissions'))
                             <th class="py-4 px-4 font-medium text-black dark:text-white">
                                 Actions
                             </th>
@@ -75,7 +75,7 @@
         <div class="relative p-4 w-full max-w-md     max-h-full">
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                    <h3 class="modal-title text-lg font-semibold text-gray-900 dark:text-white">
+                    <h3 class="modal-title text-lg font-semibold text-gray-900 dark:text-white" id="modal-title">
                         Create New Permission
                     </h3>
                     <button type="button" class="close-modal-icon">
@@ -87,8 +87,7 @@
                     <form class="p-4 md:p-5" id="permissionForm">
                         <div class="grid gap-4 mb-4 grid-cols-2">
                             <div class="col-span-2 form-group">
-                                <label for="name"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
+                                <label for="name" class="form-label">Name<span style="color:red"> *</span></label>
                                 <input type="text" name="name" id="name" class="custom-input-text"
                                     placeholder="Type permission name">
                             </div>
@@ -123,6 +122,7 @@
             if (permissionId) {
                 getPermissionDetails(permissionId);
             } else {
+                $('#modal-title').html('Create New Permission');
                 const $modalElement = document.querySelector('#crud-modal');
                 const modal = new Modal($modalElement);
                 modal.show();
@@ -213,6 +213,9 @@
                         const inputName = $(input).attr('name');
                         $(input).val(permissionData[inputName]);
                     });
+
+                    $('#modal-title').html('Edit Permission Details');
+
                     const $modalElement = document.querySelector('#crud-modal');
                     const modal = new Modal($modalElement);
                     modal.show();

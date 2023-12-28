@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 
 class ShopController extends Controller
 {
@@ -18,7 +19,7 @@ class ShopController extends Controller
      */
     public function index(Request $request)
     {
-        $shops = Shop::with('address')->get();
+        $shops = Shop::with('address')->latest()->get();
         return view('shop.index', compact('shops'));
     }
 
@@ -36,10 +37,25 @@ class ShopController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'image' => 'required|mimes:png,jpg,jpeg|max:2048',
+            'addresses.*.house_no' => 'required',
+            'addresses.*.area' => 'required',
+            'addresses.*.city' => 'required',
+            'addresses.*.pincode' => 'required',
+            'addresses.*.state' => 'required',
+            'addresses.*.country' => 'required',
+            'products.*.product_id' => 'required',
+            'products.*.qty' => 'required',
+            'products.*.price' => 'required'
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $shop = Shop::create([
             'name' => $request->input('name'),
@@ -82,7 +98,8 @@ class ShopController extends Controller
             }
         }
 
-        return redirect()->route('shops.index');
+        $message = 'New shop created successfully!';
+        return redirect()->route('shops.index')->with('alert-success', $message);
     }
 
     /**
@@ -90,7 +107,12 @@ class ShopController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $shop = Shop::with('address', 'product.productDetails')->find($id);
+        if ($shop) {
+            return view('shop.partials.viewDetails', compact('shop'));
+        } else {
+            return redirect()->back();
+        }
     }
 
     /**
@@ -112,7 +134,76 @@ class ShopController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $shop = Shop::find($id);
+        if ($shop) {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|max:255|unique:shops,name,' . $id,
+                'image' => 'mimes:png,jpg,jpeg|max:2048',
+                'addresses.*.house_no' => 'required',
+                'addresses.*.area' => 'required',
+                'addresses.*.city' => 'required',
+                'addresses.*.pincode' => 'required',
+                'addresses.*.state' => 'required',
+                'addresses.*.country' => 'required',
+                'products.*.product_id' => 'required',
+                'products.*.qty' => 'required',
+                'products.*.price' => 'required'
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()
+                    ->withErrors($validator)
+                    ->withInput();
+            }
+
+            $shop->update([
+                'name' => $request->input('name')
+            ]);
+
+            if ($request->file('image')) {
+                $name = preg_replace('/\s+/', '', $shop->name) . '_' . time();
+                $folder = '/shop$shops/' . $shop->id . '/';
+                $this->uploadOne($request->file('image'), $folder, 'public', $name);
+
+                $filePath = $folder . $name . '.' . $request->file('image')->clientExtension();
+                Shop::find($shop->id)->update(['image' => $filePath]);
+            }
+
+            if (count($request->input('addresses')) > 0) {
+                ShopAddress::where('shop_id', $shop->id)->delete();
+                $addresses = $request->input('addresses');
+                foreach ($addresses as $address) {
+                    ShopAddress::create([
+                        'shop_id' => $shop->id,
+                        'house_no' => $address['house_no'],
+                        'area' => $address['area'],
+                        'city' => $address['city'],
+                        'pincode' => $address['pincode'],
+                        'state' => $address['state'],
+                        'country' => $address['country'],
+                    ]);
+                }
+            }
+
+            if (count($request->input('products')) > 0) {
+                ShopProduct::where('shop_id', $shop->id)->delete();
+                $products = $request->input('products');
+                foreach ($products as $product) {
+                    ShopProduct::create([
+                        'shop_id' => $shop->id,
+                        'product_id' => $product['product_id'],
+                        'stock_qty' => $product['qty'],
+                        'price' => $product['price']
+                    ]);
+                }
+            }
+
+            $message = 'Shop details updated successfully!';
+            return redirect()->route('shops.index')->with('alert-success', $message);
+        } else {
+            $message = 'Shop not found';
+            return redirect()->back()->with('alert-error', $message);
+        }
     }
 
     /**
@@ -130,18 +221,35 @@ class ShopController extends Controller
         return response()->json(['message' => 'Shop deleted successfully.']);
     }
 
-    public function getOptions()
+    public function searchShops(Request $request)
     {
-        $products = Product::select('id', 'name')->get();
-        $returnHTML = view('shop.partials.options')->with('products', $products)->render();
-        $response = [
-            'success' => true,
-            'data' => [
-                'html' => $returnHTML
-            ],
-            'message' => 'Users list fetched successfully.'
-        ];
-        return response($response);
+        $searchTerm = $request->input('search');
+        if ($searchTerm) {
+            $shops = Shop::where('name', 'like', '%' . $searchTerm . '%')
+                ->orWhereHas('address', function ($query) use ($searchTerm) {
+                    $query->where('area', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('city', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('country', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('pincode', 'like', '%' . $searchTerm . '%');
+                })
+                ->orWhereHas('products', function ($query) use ($searchTerm) {
+                    $query->where('name', 'like', '%' . $searchTerm . '%')
+                        ->whereHas('shops.product', function ($pivotQuery) {
+                            $pivotQuery->where('stock_qty', '>', 0);
+                        });
+                })->get();
+            $returnHTML = view('searchCard')->with('shops', $shops)->render();
+            $response = [
+                'success' => true,
+                'data' => [
+                    'html' => $returnHTML
+                ],
+                'message' => 'shop list fetched successfully.'
+            ];
+            return response($response);
+        } else {
+            return response()->json(['message' => 'no search found.'], 404);
+        }
     }
 
     public function uploadOne(UploadedFile $uploadedFile, $folder = null, $disk = 'public', $filename = null)

@@ -15,7 +15,7 @@ class CategoryController extends Controller
      */
     public function index(Request $request): Response | View
     {
-        $categories = Category::get();
+        $categories = Category::latest()->get();
         if ($request->ajax()) {
             $returnHTML = view('category.partials.tableRows')->with('categories', $categories)->render();
             $response = [

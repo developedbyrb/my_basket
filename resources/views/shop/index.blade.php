@@ -1,12 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="w-full flex flex-row-reverse">
-        <a href="{{ route('shops.create') }}" class="custom-create-button">
-            <x-plus-svg />
-            {{ __('Create Shop') }}
-        </a>
-    </div>
+    @if (\Helper::hasPermissionToView('create-shops'))
+        <div class="w-full flex flex-row-reverse">
+            <a href="{{ route('shops.create') }}" class="custom-create-button">
+                <x-plus-svg />
+                {{ __('Create Shop') }}
+            </a>
+        </div>
+    @endif
     <div class="table-wrapper">
         <div class="max-w-full overflow-x-auto">
             <table class="w-full table-auto">
@@ -56,13 +58,22 @@
                             </td>
                             <td class="custom-table-row">
                                 <div class="flex items-center space-x-3.5">
-                                    <a href="{{ route('shops.edit', $shop->id) }}" class="hover:text-primary">
-                                        <x-edit-svg />
+                                    <a href="{{ route('shops.show', $shop->id) }}" class="hover:text-primary mt-1">
+                                        <x-view-svg />
                                     </a>
-                                    <button class="hover:text-primary mt-1 open-confirm-modal"
-                                        data-id="{{ $shop->id }}">
-                                        <x-remove-svg />
-                                    </button>
+                                    @if (\Helper::hasPermissionToView('edit-shops') && (Auth::user()->hasRole('admin') || Auth::id() === $shop->created_by))
+                                        <a href="{{ route('shops.edit', $shop->id) }}" class="hover:text-primary">
+                                            <x-edit-svg />
+                                        </a>
+                                    @endif
+                                    @if (
+                                        \Helper::hasPermissionToView('delete-shops') &&
+                                            (Auth::user()->hasRole('admin') || Auth::id() === $shop->created_by))
+                                        <button class="hover:text-primary mt-1 open-confirm-modal"
+                                            data-id="{{ $shop->id }}">
+                                            <x-remove-svg />
+                                        </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

@@ -11,12 +11,16 @@
         </td>
         <td class="custom-table-row">
             <div class="flex items-center space-x-3.5">
-                <button class="hover:text-primary open-category-modal" data-id="{{ $category->id }}">
-                    <x-edit-svg />
-                </button>
-                <button class="hover:text-primary mt-1 open-confirm-modal" data-id="{{ $category->id }}">
-                    <x-remove-svg />
-                </button>
+                @if (\Helper::hasPermissionToView('edit-categories'))
+                    <button class="hover:text-primary open-category-modal" data-id="{{ $category->id }}">
+                        <x-edit-svg />
+                    </button>
+                @endif
+                @if (\Helper::hasPermissionToView('delete-categories'))
+                    <button class="hover:text-primary mt-1 open-confirm-modal" data-id="{{ $category->id }}">
+                        <x-remove-svg />
+                    </button>
+                @endif
             </div>
         </td>
     </tr>

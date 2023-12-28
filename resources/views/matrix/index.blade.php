@@ -34,11 +34,13 @@
                         @endforeach
                     </tbody>
                 </table>
-                <div class="flex flex-row-reverse mt-5">
-                    <button type="submit" id="submit-permission" class="modal-submit-button">
-                        Submit
-                    </button>
-                </div>
+                @if (\Helper::hasPermissionToView('save-access'))
+                    <div class="flex flex-row-reverse mt-5">
+                        <button type="submit" id="submit-permission" class="modal-submit-button">
+                            Submit
+                        </button>
+                    </div>
+                @endif
             </form>
         </div>
     </div>

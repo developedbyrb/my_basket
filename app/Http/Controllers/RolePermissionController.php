@@ -36,6 +36,7 @@ class RolePermissionController extends Controller
             }
         }
 
-        return redirect('/access-management');
+        $message = 'Role wise permissions updated successfully';
+        return redirect()->route('access-management.index')->with('alert-success', $message);
     }
 }

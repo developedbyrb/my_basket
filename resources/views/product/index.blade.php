@@ -1,12 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="w-full flex flex-row-reverse">
-        <button class="custom-create-button open-product-modal" type="button" data-id="">
-            <x-plus-svg />
-            {{ __('Create Product') }}
-        </button>
-    </div>
+    @if (\Helper::hasPermissionToView('create-products'))
+        <div class="w-full flex flex-row-reverse">
+            <button class="custom-create-button open-product-modal" type="button" data-id="">
+                <x-plus-svg />
+                {{ __('Create Product') }}
+            </button>
+        </div>
+    @endif
     <div class="table-wrapper">
         <div class="max-w-full overflow-x-auto">
             <table class="w-full table-auto">
@@ -27,9 +29,11 @@
                         <th class="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
                             Create At
                         </th>
-                        <th class="py-4 px-4 font-medium text-black dark:text-white">
-                            Actions
-                        </th>
+                        @if (\Helper::hasPermissionToView('edit-products') || \Helper::hasPermissionToView('delete-products'))
+                            <th class="py-4 px-4 font-medium text-black dark:text-white">
+                                Actions
+                            </th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody id="productTableBody">
@@ -89,13 +93,13 @@
                     <form class="p-4 md:p-5" id="productForm">
                         <div class="grid gap-4 mb-4 grid-cols-2">
                             <div class="col-span-2 form-group">
-                                <label for="name" class="form-label">Name</label>
+                                <label for="name" class="form-label">Name<span style="color:red"> *</span></label>
                                 <input type="text" name="name" id="name" class="custom-input-text"
                                     placeholder="Type product name">
                             </div>
                             <div class="col-span-2 form-group">
                                 <label for="category" class="form-label">
-                                    Category
+                                    Category<span style="color:red"> *</span>
                                 </label>
                                 <button id="dropdownSearchButton" data-dropdown-toggle="dropdownSearch"
                                     data-dropdown-placement="bottom" class="custom-input-text text-left" type="button">
@@ -115,7 +119,7 @@
                                 <span id="category-error" class="invalid-feedback"></span>
                             </div>
                             <div class="col-span-2 form-group">
-                                <label class="form-label" for="product_image">Image</label>
+                                <label class="form-label" for="product_image">Image<span style="color:red"> *</span></label>
                                 <input class="file-input" id="product_image" type="file" name="image"
                                     aria-describedby="product_image">
                             </div>
@@ -164,8 +168,8 @@
         $(document).on('click', '.open-confirm-modal', function(e) {
             e.preventDefault();
             const productId = $(this).data('id');
+            $('#popup-modal').data('product-id', productId);
             const $modalElement = document.querySelector('#popup-modal');
-            $('#popup-modal').attr('data-product-id', productId);
             const modal = new Modal($modalElement, modalOptions);
             modal.show();
         });
@@ -188,7 +192,6 @@
         })
 
         $('.modal-submit-button').on('click', function(e) {
-            const productId = $('#productForm').data('product-id');
             e.preventDefault();
             checkCategoryValidation();
             $("#productForm").validate({
@@ -204,7 +207,9 @@
                         minlength: 1
                     },
                     image: {
-                        required: productId ? false : true,
+                        required: function(element) {
+                            return $('#productForm').data('product-id') ? false : true;
+                        },
                         fileExtension: true
                     }
                 },
@@ -243,7 +248,9 @@
         $('.modal-confirm-submit').on('click', function(e) {
             e.preventDefault();
             setupAjax();
+            console.log($('#popup-modal').data('product-id'));
             const productId = $('#popup-modal').data('product-id');
+            console.log(productId);
 
             let destroyProductUrl = "{{ route('products.destroy', ':id') }}";
             destroyProductUrl = destroyProductUrl.replace(':id', productId);
@@ -254,6 +261,7 @@
                 success: function(response) {
                     hideModal('confirm');
                     getProductList();
+                    $('#popup-modal').data('product-id', '');
                 },
                 error: function(data) {
                     console.log(data);

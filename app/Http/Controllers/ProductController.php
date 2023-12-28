@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\ShopProduct;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\UploadedFile;
@@ -18,7 +20,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $products = Product::get();
+        $products = Product::latest()->get();
         if ($request->ajax()) {
             $returnHTML = view('product.partials.tableRows')->with('products', $products)->render();
             $response = [
@@ -91,9 +93,19 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
-        //
+        $shopId = $request->input('shop_id');
+        $product = ShopProduct::with('productDetails')->where('product_id', $id)->where('shop_id', $shopId)->first();
+        $returnHTML = view('product.partials.addToCartTable')->with('product', $product)->render();
+        $response = [
+            'success' => true,
+            'data' => [
+                'html' => $returnHTML
+            ],
+            'message' => 'Product Details fetch successfully.'
+        ];
+        return response($response);
     }
 
     /**
@@ -111,7 +123,7 @@ class ProductController extends Controller
                 'html' => $returnHTML,
                 'productData' => $product
             ],
-            'message' => 'Product form data fetch successfully.'
+            'message' => 'Product edit form data fetch successfully.'
         ];
         return response($response);
     }
@@ -171,6 +183,7 @@ class ProductController extends Controller
             return response()->json(['message' => 'Product not found.'], 404);
         }
         ProductCategory::where('product_id', $id)->delete();
+        ShopProduct::where('product_id', $id)->delete();
         $product->delete();
         return response()->json(['message' => 'Product deleted successfully.']);
     }
@@ -179,5 +192,31 @@ class ProductController extends Controller
     {
         $name = !is_null($filename) ? $filename : Str::random(25);
         return $uploadedFile->storeAs($folder, $name . '.' . $uploadedFile->clientExtension(), $disk);
+    }
+
+    public function addToCart(Request $request, string $id): JsonResponse
+    {
+        $shopId = $request->input('shopId');
+        $product = ShopProduct::with('productDetails', 'shopDetails')
+            ->where('product_id', $id)->where('shop_id', $shopId)->first();
+        $cart = session()->get('cart', []);
+        if (isset($cart[$id . '-' . $shopId]) && isset($cart[$id . '-' . $shopId]['shopId']) && $cart[$id . '-' . $shopId]['shopId'] === $shopId) {
+            $cart[$id . '-' . $shopId]['quantity']++;
+            $price = $product->price * $cart[$id . '-' . $shopId]['quantity'];
+            $cart[$id . '-' . $shopId]['price'] = $price;
+        } else {
+            $price = $product->price * $request->input('added_qty');
+            $cart[$id . '-' . $shopId] = [
+                "name" => $product->productDetails->name,
+                "quantity" => $request->input('added_qty'),
+                "shopId" => $shopId,
+                "productId" => $id,
+                "shopName" => $product->shopDetails->name,
+                "price" => $price,
+                "image" => $product->productDetails->image
+            ];
+        }
+        session()->put('cart', $cart);
+        return response()->json(['success' => true, 'message' => 'Product added to cart!']);
     }
 }

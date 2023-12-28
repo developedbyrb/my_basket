@@ -4,8 +4,11 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -45,8 +48,23 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function role()
+    public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
+    }
+
+    // In your User model:
+    public function hasRole($roleName): bool
+    {
+        if ($this->role()->where('name', $roleName)->exists()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function cartItems(): HasMany
+    {
+        return $this->hasMany(Cart::class, 'created_by', 'id');
     }
 }

@@ -1,19 +1,22 @@
 @extends('layouts.app')
 
 @section('content')
-    <div
-        class="grid mb-8 border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 md:mb-12 bg-white dark:bg-gray-800">
-        <form class="p-4 md:p-5" id="shopForm" method="POST" action="{{ route('shops.store') }}" enctype="multipart/form-data">
+    <div class="card-wrapper">
+        <form class="p-4 md:p-5" id="shopForm" method="POST"
+            action="{{ isset($shop) ? route('shops.update', $shop->id) : route('shops.store') }}"
+            enctype="multipart/form-data">
+            @if (isset($shop))
+                @method('PUT')
+            @endif
             @csrf
             <div class="grid gap-4 mb-4 md:grid-cols-2">
                 <div class="col-span-2 md:col-span-1 form-group">
-                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
+                    <label for="name" class="form-label">Name <span style="color:red"> *</span></label>
                     <input type="text" name="name" id="name" class="custom-input-text"
                         placeholder="Type shop name" value="{{ isset($shop) ? $shop->name : '' }}">
                 </div>
                 <div class="col-span-2 md:col-span-1 form-group">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                        for="shop_image">Image</label>
+                    <label class="form-label" for="shop_image">Image <span style="color:red"> *</span></label>
                     <input class="file-input" aria-describedby="shop_image_help" id="shop_image" type="file"
                         name="image">
                 </div>
@@ -29,36 +32,33 @@
                     </div>
                     <div id="addressFields">
                         @if (isset($shop))
-                            @foreach ($shop->address as $address)
+                            @foreach ($shop->address as $keyAddress => $address)
                                 <div class="grid grid-cols-5 gap-3 address-row">
                                     <div class="col-span-4">
                                         <div class="grid gap-4 mb-4 md:grid-cols-4">
                                             <div class="col-span-1 md:col-span form-group">
-                                                <label for="house_no"
-                                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                                <label for="house_no" class="form-label">
                                                     House Number</label>
-                                                <input type="text" name="addresses[0][house_no]" id="house_no"
-                                                    class="custom-input-text" placeholder="Type house number"
-                                                    value="{{ $address->house_no }}">
+                                                <input type="text" name="addresses[{{ $keyAddress }}][house_no]"
+                                                    value="{{ $address->house_no }}" id="house_no"
+                                                    class="custom-input-text" placeholder="Type house number">
                                             </div>
                                             <div class="col-span-1 md:col-span-1 form-group">
-                                                <label for="area"
-                                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Area</label>
-                                                <input type="text" name="addresses[0][area]" id="area"
-                                                    class="custom-input-text" placeholder="Type area"
+                                                <label for="area" class="form-label">Area</label>
+                                                <input type="text" name="addresses[{{ $keyAddress }}][area]"
+                                                    id="area" class="custom-input-text" placeholder="Type area"
                                                     value="{{ $address->area }}">
                                             </div>
                                             <div class="col-span-1 md:col-span-1 form-group">
-                                                <label for="city"
-                                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City</label>
-                                                <input type="text" name="addresses[0][city]" id="city"
-                                                    class="custom-input-text" placeholder="Type city"
+                                                <label for="city" class="form-label">City</label>
+                                                <input type="text" name="addresses[{{ $keyAddress }}][city]"
+                                                    id="city" class="custom-input-text" placeholder="Type city"
                                                     value="{{ $address->city }}">
                                             </div>
                                             <div class="col-span-1 md:col-span-1 form-group">
-                                                <label for="state"
-                                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">State</label>
-                                                <select id="state" class="custom-input-text" name="addresses[0][state]">
+                                                <label for="state" class="form-label">State</label>
+                                                <select id="state" class="custom-input-text"
+                                                    name="addresses[{{ $keyAddress }}][state]">
                                                     <option selected value="">Select State</option>
                                                     <option {{ $address->state == 'gujrat' ? 'selected' : '' }}
                                                         value="gujrat">
@@ -76,10 +76,9 @@
                                         </div>
                                         <div class="grid gap-4 mb-4 md:grid-cols-2">
                                             <div class="col-span-2 md:col-span-1 form-group">
-                                                <label for="country"
-                                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Country</label>
+                                                <label for="country" class="form-label">Country</label>
                                                 <select id="country" class="custom-input-text"
-                                                    name="addresses[0][country]">
+                                                    name="addresses[{{ $keyAddress }}][country]">
                                                     <option selected value="">Select country</option>
                                                     <option {{ $address->country == 'india' ? 'selected' : '' }}
                                                         value="india">
@@ -91,10 +90,9 @@
                                                 </select>
                                             </div>
                                             <div class="col-span-2 md:col-span-1 form-group">
-                                                <label for="pincode"
-                                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pincode</label>
-                                                <input type="text" name="addresses[0][pincode]" id="pincode"
-                                                    class="custom-input-text" placeholder="Type pincode"
+                                                <label for="pincode" class="form-label">Pincode</label>
+                                                <input type="text" name="addresses[{{ $keyAddress }}][pincode]"
+                                                    id="pincode" class="custom-input-text" placeholder="Type pincode"
                                                     value="{{ $address->pincode }}">
                                             </div>
                                         </div>
@@ -111,27 +109,26 @@
                                 <div class="col-span-4">
                                     <div class="grid gap-4 mb-4 md:grid-cols-4">
                                         <div class="col-span-1 md:col-span form-group">
-                                            <label for="house_no"
-                                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                                House Number</label>
+                                            <label for="house_no" class="form-label">
+                                                House Number <span style="color:red"> *</span></label>
                                             <input type="text" name="addresses[0][house_no]" id="house_no"
                                                 class="custom-input-text" placeholder="Type house number">
                                         </div>
                                         <div class="col-span-1 md:col-span-1 form-group">
-                                            <label for="area"
-                                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Area</label>
+                                            <label for="area" class="form-label">Area <span style="color:red">
+                                                    *</span></label>
                                             <input type="text" name="addresses[0][area]" id="area"
                                                 class="custom-input-text" placeholder="Type area">
                                         </div>
                                         <div class="col-span-1 md:col-span-1 form-group">
-                                            <label for="city"
-                                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City</label>
+                                            <label for="city" class="form-label">City <span style="color:red">
+                                                    *</span></label>
                                             <input type="text" name="addresses[0][city]" id="city"
                                                 class="custom-input-text" placeholder="Type city">
                                         </div>
                                         <div class="col-span-1 md:col-span-1 form-group">
-                                            <label for="state"
-                                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">State</label>
+                                            <label for="state" class="form-label">State <span style="color:red">
+                                                    *</span></label>
                                             <select id="state" class="custom-input-text" name="addresses[0][state]">
                                                 <option selected value="">Select State</option>
                                                 <option value="gujrat">Gujrat</option>
@@ -143,8 +140,8 @@
                                     </div>
                                     <div class="grid gap-4 mb-4 md:grid-cols-2">
                                         <div class="col-span-2 md:col-span-1 form-group">
-                                            <label for="country"
-                                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Country</label>
+                                            <label for="country" class="form-label">Country <span style="color:red">
+                                                    *</span></label>
                                             <select id="country" class="custom-input-text"
                                                 name="addresses[0][country]">
                                                 <option selected value="">Select country</option>
@@ -153,8 +150,8 @@
                                             </select>
                                         </div>
                                         <div class="col-span-2 md:col-span-1 form-group">
-                                            <label for="pincode"
-                                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pincode</label>
+                                            <label for="pincode" class="form-label">Pincode <span style="color:red">
+                                                    *</span></label>
                                             <input type="text" name="addresses[0][pincode]" id="pincode"
                                                 class="custom-input-text" placeholder="Type pincode">
                                         </div>
@@ -181,74 +178,74 @@
                     </div>
                     <div id="productFields">
                         @if (isset($shop))
-                            <div class="grid grid-cols-5 gap-3 product-row">
-                                <div class="col-span-4">
-                                    <div class="grid gap-4 mb-4 md:grid-cols-3">
-                                        <div class="col-span-1 md:col-span-1 form-group">
-                                            <label for="product_id"
-                                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                                Product</label>
-                                            <select id="product_id" class="custom-input-text"
-                                                name="products[0][product_id]">
-                                                <option selected value="">Select Product</option>
-                                                @foreach ($products as $product)
-                                                    <option {{ $shopProduct->id == $product['id'] ? 'selected' : '' }}
-                                                        value="{{ $product['id'] }}">{{ $product['name'] }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-span-1 md:col-span-1 form-group">
-                                            <label for="qty"
-                                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Stock
-                                                Quantity</label>
-                                            <input type="text" name="products[0][qty]" id="qty"
-                                                class="custom-input-text" placeholder="Type qty"
-                                                value="{{ $shopProduct->stock_qty }}">
-                                        </div>
-                                        <div class="col-span-1 md:col-span-1 form-group">
-                                            <label for="price"
-                                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price
-                                            </label>
-                                            <input type="text" name="products[0][price]" id="price"
-                                                class="custom-input-text" placeholder="Type price"
-                                                value="{{ $shopProduct->price }}">
+                            @foreach ($shop->product as $key => $shopProduct)
+                                <div class="grid grid-cols-5 gap-3 product-row">
+                                    <div class="col-span-4">
+                                        <div class="grid gap-4 mb-4 md:grid-cols-3">
+                                            <div class="col-span-1 md:col-span-1 form-group">
+                                                <label for="product_id" class="form-label">
+                                                    Product</label>
+                                                <select id="product_id" class="custom-input-text"
+                                                    name="products[{{ $key }}][product_id]">
+                                                    <option selected value="">Select Product</option>
+                                                    @foreach ($products as $productDetails)
+                                                        <option
+                                                            {{ $shopProduct->product_id == $productDetails['id'] ? 'selected' : '' }}
+                                                            value="{{ $productDetails['id'] }}">
+                                                            {{ $productDetails['name'] }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-span-1 md:col-span-1 form-group">
+                                                <label for="qty" class="form-label">Stock
+                                                    Quantity</label>
+                                                <input type="text" name="products[{{ $key }}][qty]"
+                                                    id="qty" class="custom-input-text" placeholder="Type qty"
+                                                    value="{{ $shopProduct->stock_qty }}">
+                                            </div>
+                                            <div class="col-span-1 md:col-span-1 form-group">
+                                                <label for="price" class="form-label">Price
+                                                </label>
+                                                <input type="text" name="products[{{ $key }}][price]"
+                                                    id="price" class="custom-input-text" placeholder="Type price"
+                                                    value="{{ $shopProduct->price }}">
+                                            </div>
                                         </div>
                                     </div>
+                                    <div class="hidden flex justify-center items-center remove-product">
+                                        <button class="remove-product-button" type="button" data-current-product="0">
+                                            {{ __('Remove') }}
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="hidden flex justify-center items-center remove-product">
-                                    <button class="remove-product-button" type="button" data-current-product="0">
-                                        {{ __('Remove') }}
-                                    </button>
-                                </div>
-                            </div>
+                            @endforeach
                         @else
                             <div class="grid grid-cols-5 gap-3 product-row">
                                 <div class="col-span-4">
                                     <div class="grid gap-4 mb-4 md:grid-cols-3">
                                         <div class="col-span-1 md:col-span-1 form-group">
-                                            <label for="product_id"
-                                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                                Product</label>
+                                            <label for="product_id" class="form-label">
+                                                Product <span style="color:red"> *</span></label>
                                             <select id="product_id" class="custom-input-text"
                                                 name="products[0][product_id]">
                                                 <option selected value="">Select Product</option>
-                                                @foreach ($products as $products)
-                                                    <option value="{{ $products['id'] }}">{{ $products['name'] }}
+                                                @foreach ($products as $productDetails)
+                                                    <option value="{{ $productDetails['id'] }}">
+                                                        {{ $productDetails['name'] }}
                                                     </option>
                                                 @endforeach
                                             </select>
                                         </div>
                                         <div class="col-span-1 md:col-span-1 form-group">
-                                            <label for="qty"
-                                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Stock
-                                                Quantity</label>
+                                            <label for="qty" class="form-label">Stock
+                                                Quantity <span style="color:red"> *</span></label>
                                             <input type="text" name="products[0][qty]" id="qty"
                                                 class="custom-input-text" placeholder="Type qty">
                                         </div>
                                         <div class="col-span-1 md:col-span-1 form-group">
-                                            <label for="price"
-                                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price
+                                            <label for="price" class="form-label">Price<span style="color:red">
+                                                    *</span>
                                             </label>
                                             <input type="text" name="products[0][price]" id="price"
                                                 class="custom-input-text" placeholder="Type price">
@@ -282,28 +279,32 @@
         let totalAddressCount = 1;
         let totalProductCount = 1;
         const productArray = @json($products);
-        let assignedAddress = 1;
-        let assignedProduct = 1;
+        let assignedAddress = [];
+        let assignedProduct = [];
+        let isEdit = false;
         @if (isset($shop))
+            isEdit = true;
             assignedAddress = @json($shop->address);
             assignedProduct = @json($shop->product);
         @endif
 
         $(document).ready(function() {
-            totalAddressCount = assignedAddress.length;
-            $('.add-address-button').data('address-count', (assignedAddress.length - 1));
-            if (totalAddressCount > 1) {
-                $('.remove-address').removeClass('hidden');
-            } else {
-                $('.remove-address').addClass('hidden');
-            }
+            if (isEdit) {
+                totalAddressCount = assignedAddress.length;
+                totalProductCount = assignedProduct.length;
+                $('.add-address-button').data('address-count', (assignedAddress.length - 1));
+                if (totalAddressCount > 1) {
+                    $('.remove-address').removeClass('hidden');
+                } else {
+                    $('.remove-address').addClass('hidden');
+                }
 
-            totalProductCount = assignedProduct.length;
-            $('.add-product-button').data('product-count', (assignedProduct.length - 1));
-            if (totalProductCount > 1) {
-                $('.remove-product').removeClass('hidden');
-            } else {
-                $('.remove-product').addClass('hidden');
+                $('.add-product-button').data('product-count', (assignedProduct.length - 1));
+                if (totalProductCount > 1) {
+                    $('.remove-product').removeClass('hidden');
+                } else {
+                    $('.remove-product').addClass('hidden');
+                }
             }
         });
 
@@ -317,7 +318,7 @@
                         }
                     },
                     image: {
-                        required: true,
+                        required: isEdit ? false : true,
                         fileExtension: true
                     },
                 },
@@ -422,28 +423,28 @@
             html += '<div class="grid gap-4 mb-4 md:grid-cols-4">';
             html += '<div class="col-span-1 md:col-span form-group">';
             html += '<label for="house_no"';
-            html += 'class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">';
+            html += 'class="form-label">';
             html += 'House Number</label>';
             html += '<input type="text" name="addresses[' + currentAddressCount + '][house_no]" id="house_no"';
             html += 'class="custom-input-text" placeholder="Type house number">';
             html += '</div>';
             html += '<div class="col-span-1 md:col-span-1 form-group">';
             html += '<label for="area"';
-            html += 'class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Area</label>';
+            html += 'class="form-label">Area</label>';
             html += '<input type="text" name="addresses[' + currentAddressCount +
                 '][area]" id="area" class="custom-input-text"';
             html += 'placeholder="Type area">';
             html += '</div>';
             html += '<div class="col-span-1 md:col-span-1 form-group">';
             html += '<label for="city"';
-            html += 'class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City</label>';
+            html += 'class="form-label">City</label>';
             html += '<input type="text" name="addresses[' + currentAddressCount +
                 '][city]" id="city" class="custom-input-text"';
             html += 'placeholder="Type city">';
             html += '</div>';
             html += '<div class="col-span-1 md:col-span-1 form-group">';
             html += '<label for="state"';
-            html += 'class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">State</label>';
+            html += 'class="form-label">State</label>';
             html += '<select id="state" class="custom-input-text" name="addresses[' + currentAddressCount +
                 '][state]">';
             html += '<option selected value="">Select State</option>';
@@ -457,7 +458,7 @@
             html += '<div class="grid gap-4 mb-4 md:grid-cols-2">';
             html += '<div class="col-span-2 md:col-span-1 form-group">';
             html += '<label for="country"';
-            html += 'class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Country</label>';
+            html += 'class="form-label">Country</label>';
             html += '<select id="country" class="custom-input-text" name="addresses[' + currentAddressCount +
                 '][country]">';
             html += '<option selected value="">Select country</option>';
@@ -467,7 +468,7 @@
             html += '</div>';
             html += '<div class="col-span-2 md:col-span-1 form-group">';
             html += '<label for="pincode"';
-            html += 'class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pincode</label>';
+            html += 'class="form-label">Pincode</label>';
             html += '<input type="text" name="addresses[' + currentAddressCount + '][pincode]" id="pincode"';
             html += 'class="custom-input-text" placeholder="Type pincode">';
             html += '</div>';
@@ -508,7 +509,7 @@
             html += '<div class="col-span-1 md:col-span-1 form-group">';
             html += '<label for="product_id-' + currentProductCount +
                 '"';
-            html += 'class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">';
+            html += 'class="form-label">';
             html += 'Product</label>';
             html += '<select id="product_id-' + currentProductCount +
                 '" class="custom-input-text product-dropdown" name="products[' + currentProductCount +
@@ -522,14 +523,14 @@
             html += '</div>';
             html += '<div class="col-span-1 md:col-span-1 form-group">';
             html += '<label for="qty"';
-            html += 'class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Stock';
+            html += 'class="form-label">Stock';
             html += 'Quantity</label>';
             html += '<input type="text" name="products[' + currentProductCount + '][qty]" id="qty"';
             html += 'class="custom-input-text" placeholder="Type qty">';
             html += '</div>';
             html += '<div class="col-span-1 md:col-span-1 form-group">';
             html += '<label for="price"';
-            html += 'class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price';
+            html += 'class="form-label">Price';
             html += '</label>';
             html += '<input type="text" name="products[' + currentProductCount + '][price]" id="price"';
             html += 'class="custom-input-text" placeholder="Type price">';

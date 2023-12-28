@@ -17,7 +17,7 @@
         </div>
 
         <div class="mt-4 form-group">
-            <label for="role_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
+            <label for="role_id" class="form-label">Role</label>
             <select id="role_id" class="custom-input-text" name="role_id">
                 <option selected value="">Select role</option>
                 @foreach ($roles as $role)

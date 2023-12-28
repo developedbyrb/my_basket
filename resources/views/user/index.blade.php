@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="w-full flex flex-row-reverse">
-        @if (auth()->user()->role->id === 1)
+        @if (\Helper::hasPermissionToView('create-users'))
             <button class="custom-create-button open-user-modal" type="button" data-id="">
                 <x-plus-svg />
                 {{ __('Create User') }}
@@ -29,7 +29,7 @@
                         <th class="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
                             Create At
                         </th>
-                        @if (auth()->user()->role->id === 1)
+                        @if (\Helper::hasPermissionToView('edit-users') || \Helper::hasPermissionToView('delete-users'))
                             <th class="py-4 px-4 font-medium text-black dark:text-white">
                                 Actions
                             </th>
@@ -81,7 +81,7 @@
         <div class="relative p-4 w-full max-w-2xl max-h-full">
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                    <h3 class="modal-title text-lg font-semibold text-gray-900 dark:text-white">
+                    <h3 class="modal-title text-lg font-semibold text-gray-900 dark:text-white" id="modal-title">
                         Create New User
                     </h3>
                     <button type="button" class="close-modal-icon">
@@ -93,27 +93,23 @@
                     <form class="p-4 md:p-5" id="userForm">
                         <div class="grid gap-4 mb-4 grid-cols-2">
                             <div class="col-span-2 sm:col-span-1 form-group">
-                                <label for="name"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
+                                <label for="name" class="form-label">Name<span style="color:red"> *</span></label>
                                 <input type="text" name="name" id="name" class="custom-input-text"
                                     placeholder="Type user name">
                             </div>
                             <div class="col-span-2 sm:col-span-1 form-group">
-                                <label for="email"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+                                <label for="email" class="form-label">Email<span style="color:red"> *</span></label>
                                 <input type="text" name="email" id="email" class="custom-input-text"
                                     placeholder="Type user email">
                             </div>
                             <div class="col-span-2 form-group">
-                                <label for="role"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
+                                <label for="role" class="form-label">Role<span style="color:red"> *</span></label>
                                 <select id="role" class="custom-input-text" name="role_id">
                                     <option selected="">Select role</option>
                                 </select>
                             </div>
                             <div class="col-span-2 form-group">
-                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                    for="user_avatar">Profile Picture</label>
+                                <label class="form-label" for="user_avatar">Profile Picture</label>
                                 <input class="file-input" aria-describedby="user_avatar_help" id="user_avatar"
                                     type="file" name="profile_pic">
                             </div>
@@ -249,6 +245,7 @@
                 url: URL,
                 success: function(success) {
                     addOptionsToRoleDropdown(success.data.roles);
+                    $('#modal-title').html('Create New User');
                     const $modalElement = document.querySelector('#crud-modal');
                     const modal = new Modal($modalElement);
                     modal.show();
@@ -275,6 +272,9 @@
                         if (inputName != 'profile_pic')
                             $(input).val(userData[inputName]);
                     });
+
+                    $('#modal-title').html('Edit User Details');
+
                     const $modalElement = document.querySelector('#crud-modal');
                     const modal = new Modal($modalElement);
                     modal.show();
@@ -331,11 +331,7 @@
                     hideModal('crud');
                     getUserList();
                     if (userId) {
-                        <<
-                        << << < HEAD
-                        $('#userForm').removeData("user-id"); ===
-                        === = >>>
-                        >>> > 39e37772 cc1dee34eaf14b5bd834508a054a671b
+                        $('#userForm').removeData("user-id");
                         $('#putMethod').remove();
                     }
                 },

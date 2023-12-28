@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Permission;
+use App\Models\RolePermission;
 use Illuminate\Http\Request;
 
 class PermissionController extends Controller
@@ -36,20 +37,17 @@ class PermissionController extends Controller
             'name' => 'required|string|max:255|unique:permissions'
         ]);
 
-        Permission::create(['name' => $request->input('name')]);
+        $permission = Permission::create(['name' => $request->input('name')]);
+
+        RolePermission::create([
+            'role_id' => 1,
+            'permission_id' => $permission->id
+        ]);
 
         return response()->json([
             'success' => true,
             'message' => 'Permission created Successfully.'
         ]);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**

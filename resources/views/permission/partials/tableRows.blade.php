@@ -12,12 +12,16 @@
         @if (auth()->user()->role->id === 1)
             <td class="custom-table-row">
                 <div class="flex items-center space-x-3.5">
-                    <button class="hover:text-primary open-permission-modal" data-id="{{ $permission->id }}">
-                        <x-edit-svg />
-                    </button>
-                    <button class="hover:text-primary mt-1 open-confirm-modal" data-id="{{ $permission->id }}">
-                        <x-remove-svg />
-                    </button>
+                    @if (\Helper::hasPermissionToView('edit-permissions'))
+                        <button class="hover:text-primary open-permission-modal" data-id="{{ $permission->id }}">
+                            <x-edit-svg />
+                        </button>
+                    @endif
+                    @if (\Helper::hasPermissionToView('delete-permissions'))
+                        <button class="hover:text-primary mt-1 open-confirm-modal" data-id="{{ $permission->id }}">
+                            <x-remove-svg />
+                        </button>
+                    @endif
                 </div>
             </td>
         @endif

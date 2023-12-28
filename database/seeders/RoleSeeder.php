@@ -13,9 +13,9 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        $records = [['name' =>  'Admin'], ['name' => 'Shopper'], ['name' => 'Shopkeeper']];
-        foreach ($records as $record) {
-            Role::create($record);
+        $roles = config('globalConstant.APP_ROLES');
+        foreach ($roles as $role) {
+            Role::create($role);
         }
     }
 }
