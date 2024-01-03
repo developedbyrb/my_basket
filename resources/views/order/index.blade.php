@@ -62,25 +62,31 @@
                             <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
                                 @switch($order->status)
                                     @case(1)
-                                        <span class="bg-yellow-100 text-yellow-800 badge dark:bg-yellow-900 dark:text-yellow-300">
+                                        <span class="yellow-badge">
                                             {{ config('globalConstant.ORDER_STATUSES')[$order->status] }}
                                         </span>
                                     @break
 
                                     @case(2)
-                                        <span class="bg-purple-100 text-purple-800 badge dark:bg-purple-900 dark:text-purple-300">
+                                        <span class="purple-badge">
+                                            {{ config('globalConstant.ORDER_STATUSES')[$order->status] }}
+                                        </span>
+                                    @break
+
+                                    @case(4)
+                                        <span class="red-badge">
                                             {{ config('globalConstant.ORDER_STATUSES')[$order->status] }}
                                         </span>
                                     @break
 
                                     @default
-                                        <span class="bg-green-100 text-green-800 badge dark:bg-green-900 dark:text-green-300">
+                                        <span class="green-badge">
                                             {{ config('globalConstant.ORDER_STATUSES')[$order->status] }}
                                         </span>
                                 @endswitch
                             </td>
                             <td>
-                                @if ($order->status !== 3)
+                                @if ($order->status !== 3 && $order->status !== 4)
                                     <button title="remove-order" class="hover:text-primary mt-1 open-cancel-modal"
                                         data-id="{{ $order->id }}">
                                         <x-remove-svg />
@@ -90,8 +96,7 @@
                         </tr>
                         @empty
                             <tr class="border-b dark:border-neutral-500">
-                                <td class="text-center py-4 px-4 font-medium text-black-700 dark:text-white-700 xl:pl-11"
-                                    colspan="9">
+                                <td class="no-records" colspan="9">
                                     No records
                                 </td>
                             </tr>
@@ -123,30 +128,15 @@
                                         <label for="message"
                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
                                             Reason <span style="color:red"> *</span></label>
-                                        <textarea id="message" rows="4"
-                                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        <textarea id="message" rows="4" name="reason" class="custom-text-area"
                                             placeholder="Write your thoughts here..."></textarea>
                                     </div>
 
-                                    <div class="flex items-center justify-center w-full col-span-2">
-                                        <label for="dropzone-file"
-                                            class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
-                                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                                <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-                                                </svg>
-                                                <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span
-                                                        class="font-semibold">Click to upload an image if required</span> or
-                                                    drag and drop</p>
-                                                <p class="text-xs text-gray-500 dark:text-gray-400">PNG or JPG</p>
-                                            </div>
-                                            <input id="dropzone-file" type="file" class="hidden" />
-                                        </label>
+                                    <div class="col-span-2 form-group">
+                                        <label class="form-label" for="cancelled_reason_image">Image</label>
+                                        <input class="file-input" id="cancelled_reason_image" type="file"
+                                            name="cancelled_reason_image" aria-describedby="cancelled_reason_image">
                                     </div>
-
                                 </div>
                                 <div class="flex flex-row-reverse mt-5">
                                     <button type="button" class="modal-submit-button">
@@ -167,20 +157,73 @@
         <script type="module">
             $(document).on('click', '.open-cancel-modal', function(e) {
                 const currentId = $(this).data('id');
-                const $modalElement = document.querySelector('#crud-modal');
-                const modal = new Modal($modalElement);
-                modal.show();
+                $('#cancelOrderForm').data('order-id', currentId);
+                openModel('#crud-modal');
             });
 
             $('.modal-cancel-button, .close-modal-icon').on('click', function(e) {
                 e.preventDefault();
-                hideModal();
+                closeModel('#crud-modal');
             });
 
-            function hideModal() {
-                const $modalElement = document.querySelector('#crud-modal');
-                const modal = new Modal($modalElement);
-                modal.hide();
-            }
+            $('.modal-submit-button').on('click', function(e) {
+                e.preventDefault();
+                $("#cancelOrderForm").validate({
+                    rules: {
+                        reason: {
+                            required: true,
+                            normalizer: function(value) {
+                                return $.trim(value);
+                            }
+                        },
+                        cancelled_reason_image: {
+                            fileExtension: true
+                        }
+                    },
+                    errorElement: 'span',
+                    errorPlacement: function(error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-group').append(error);
+                    },
+                    highlight: function(element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function(element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
+                    }
+                });
+
+                if ($("#cancelOrderForm").valid()) {
+                    const formData = objectifyForm($("#cancelOrderForm").serializeArray());
+                    submitForm(formData);
+                }
+
+                function submitForm(data) {
+                    setupAjax();
+                    const orderId = $('#cancelOrderForm').data('order-id');
+                    let postURL = "{{ route('orders.destroy', ':id') }}";
+                    postURL = postURL.replace(':id', orderId);
+
+                    let formData = new FormData();
+                    for (var key in data) {
+                        formData.append(key, data[key]);
+                    }
+                    $.ajax({
+                        url: postURL,
+                        type: 'POST',
+                        data: formData,
+                        async: false,
+                        processData: false,
+                        contentType: false,
+                        dataType: 'json',
+                        success: function(data) {
+                            closeModel('#crud-modal');
+                            $('#cancelOrderForm').removeData("order-id");
+                            location.reload();
+                        },
+                        error: function(data) {}
+                    });
+                }
+            });
         </script>
     @endpush

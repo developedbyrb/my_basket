@@ -135,7 +135,7 @@
                                             <a class="custom-create-button cursor-pointer add-to-cart" type="button"
                                                 title="Add to cart" data-id="{{ $product->product_id }}"
                                                 data-shop-id="{{ $product->shop_id }}">
-                                                <x-add-cart-svg />
+                                                @include('svg.add-cart-svg')
                                             </a>
                                         </td>
                                     </tr>
@@ -194,9 +194,7 @@
 
         $('.modal-cancel-button, .close-modal-icon').on('click', function(e) {
             e.preventDefault();
-            const $modalElement = document.querySelector('#crud-modal');
-            const modal = new Modal($modalElement);
-            modal.hide();
+            closeModel('#crud-modal');
         });
 
         $(document).on('click', '.remove-cart-product', function(e) {
@@ -257,30 +255,12 @@
                 },
                 success: function(success) {
                     $('#cartTable').html(success.data.html);
-                    const $modalElement = document.querySelector('#crud-modal');
-                    const modal = new Modal($modalElement);
-                    modal.show();
+                    openModel('#crud-modal');
                 },
                 error: function(data) {
                     console.error('Custom Error', data);
                 }
             });
-        }
-
-        function setupAjax() {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-        }
-
-        function objectifyForm(formArray) {
-            let returnArray = {};
-            for (let i = 0; i < formArray.length; i++) {
-                returnArray[formArray[i]['name']] = formArray[i]['value'];
-            }
-            return returnArray;
         }
 
         function submitForm(data) {
@@ -304,9 +284,7 @@
                 contentType: false,
                 dataType: 'json',
                 success: function(data) {
-                    const $modalElement = document.querySelector('#crud-modal');
-                    const modal = new Modal($modalElement);
-                    modal.hide();
+                    closeModel('#crud-modal');
                     $('#cartForm').removeData("product-id");
                     $('#cartForm').removeData("shop-id");
                     location.reload();

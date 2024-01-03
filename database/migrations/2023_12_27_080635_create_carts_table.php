@@ -19,9 +19,12 @@ return new class extends Migration
             $table->unsignedBigInteger('product_id');
             $table->unsignedBigInteger('created_by');
             $table->timestamps();
-            $table->foreign('shop_id')->references('id')->on('shops')->onDelete('cascade');
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('shop_id')->references('id')->on('shops')
+                ->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('products')
+                ->onDelete('cascade');
+            $table->foreign('created_by')->references('id')->on('users')
+                ->onDelete('cascade');
         });
     }
 

@@ -9,37 +9,28 @@ return [
     ],
     'APP_PERMISSIONS' => [
         ['name' =>  'get-roles'],
-        ['name' => 'save-roles'],
+        ['name' => 'create-roles'],
         ['name' => 'edit-roles'],
-        ['name' => 'update-roles'],
         ['name' => 'delete-roles'],
         ['name' => 'get-permissions'],
-        ['name' => 'save-permissions'],
+        ['name' => 'create-permissions'],
         ['name' => 'edit-permissions'],
-        ['name' => 'update-permissions'],
         ['name' => 'delete-permissions'],
         ['name' => 'get-categories'],
-        ['name' => 'save-categories'],
+        ['name' => 'create-categories'],
         ['name' => 'edit-categories'],
-        ['name' => 'update-categories'],
         ['name' => 'delete-categories'],
         ['name' => 'get-users'],
         ['name' => 'create-users'],
-        ['name' => 'save-users'],
         ['name' => 'edit-users'],
-        ['name' => 'update-users'],
         ['name' => 'delete-users'],
         ['name' => 'get-products'],
         ['name' => 'create-products'],
-        ['name' => 'save-products'],
         ['name' => 'edit-products'],
-        ['name' => 'update-products'],
         ['name' => 'delete-products'],
         ['name' => 'get-shops'],
         ['name' => 'create-shops'],
-        ['name' => 'save-shops'],
         ['name' => 'edit-shops'],
-        ['name' => 'update-shops'],
         ['name' => 'delete-shops'],
         ['name' => 'get-access'],
         ['name' => 'save-access']
@@ -53,6 +44,16 @@ return [
     'ORDER_STATUSES' => [
         1 => 'Placed',
         2 => 'In Transits',
-        3 => 'Delivered'
+        3 => 'Delivered',
+        4 => 'Cancelled'
+    ],
+    'RETURN_POLICY' => [
+        1 => '7 Days',
+        2 => '10 Days',
+        3 => '15 Days',
+    ],
+    'PRODUCT_STATE' => [
+        1 => 'New',
+        2 => 'Refurbished'
     ]
 ];

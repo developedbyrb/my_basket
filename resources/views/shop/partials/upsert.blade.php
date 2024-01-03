@@ -26,7 +26,7 @@
                     <div class="flex justify-between">
                         <h4 class="mb-2">Address:</h4>
                         <button class="add-address-button" type="button" data-address-count="0">
-                            <x-plus-svg />
+                            @include('svg.plus')
                             {{ __('Create More') }}
                         </button>
                     </div>
@@ -131,7 +131,7 @@
                                                     *</span></label>
                                             <select id="state" class="custom-input-text" name="addresses[0][state]">
                                                 <option selected value="">Select State</option>
-                                                <option value="gujrat">Gujrat</option>
+                                                <option value="gujarat">Gujarat</option>
                                                 <option value="rajsthan">Rajsthan</option>
                                                 <option value="up">Uttar Pradesh</option>
                                                 <option value="nj">New Jearsy</option>
@@ -172,7 +172,7 @@
                     <div class="flex justify-between">
                         <h4 class="mb-2">Products:</h4>
                         <button class="add-product-button" type="button" data-product-count="0">
-                            <x-plus-svg />
+                            @include('svg.plus')
                             {{ __('Create More') }}
                         </button>
                     </div>
@@ -185,7 +185,7 @@
                                             <div class="col-span-1 md:col-span-1 form-group">
                                                 <label for="product_id" class="form-label">
                                                     Product</label>
-                                                <select id="product_id" class="custom-input-text"
+                                                <select id="product_id" class="product-dropdown custom-input-text"
                                                     name="products[{{ $key }}][product_id]">
                                                     <option selected value="">Select Product</option>
                                                     @foreach ($products as $productDetails)
@@ -227,7 +227,7 @@
                                         <div class="col-span-1 md:col-span-1 form-group">
                                             <label for="product_id" class="form-label">
                                                 Product <span style="color:red"> *</span></label>
-                                            <select id="product_id" class="custom-input-text"
+                                            <select id="product_id" class="product-dropdown custom-input-text"
                                                 name="products[0][product_id]">
                                                 <option selected value="">Select Product</option>
                                                 @foreach ($products as $productDetails)
@@ -448,7 +448,7 @@
             html += '<select id="state" class="custom-input-text" name="addresses[' + currentAddressCount +
                 '][state]">';
             html += '<option selected value="">Select State</option>';
-            html += '<option value="gujrat">Gujrat</option>';
+            html += '<option value="gujarat">Gujarat</option>';
             html += '<option value="rajsthan">Rajsthan</option>';
             html += '<option value="up">Uttar Pradesh</option>';
             html += '<option value="nj">New Jearsy</option>';
@@ -501,7 +501,6 @@
             e.preventDefault();
             let currentProductCount = $(this).data('product-count');
             currentProductCount++;
-
             let html = '';
             html += '<div class="grid grid-cols-5 gap-3 product-row">';
             html += '<div class="col-span-4">';
@@ -512,7 +511,8 @@
             html += 'class="form-label">';
             html += 'Product</label>';
             html += '<select id="product_id-' + currentProductCount +
-                '" class="custom-input-text product-dropdown" name="products[' + currentProductCount +
+                '" class="product-dropdown custom-input-text" name="products[' +
+                currentProductCount +
                 '][product_id]">';
             html += '<option selected value="">Select Product</option>';
             productArray.forEach(element => {
@@ -550,6 +550,7 @@
             if (totalProductCount > 1) {
                 $('.remove-product').removeClass('hidden');
             }
+            disableSelection();
         });
 
         $(document).on('click', '.remove-product-button', function(e) {
@@ -558,6 +559,28 @@
             if (totalProductCount === 1) {
                 $('.remove-product').addClass('hidden');
             }
+        });
+
+        function disableSelection() {
+            var all_selects = $(".product-dropdown");
+            $(".product-dropdown option").prop("disabled",
+                false);
+            for (var x = 0; x < all_selects.length; x++) {
+                var currentSelection = $(all_selects[x]).prop("id");
+                for (var y = 0; y < all_selects.length; y++) {
+                    if (currentSelection == $(all_selects[y]).prop("id")) continue;
+                    console.log('test', currentSelection, $(all_selects[y]).prop("id"));
+                    var selectedPerson = $(all_selects[x]).val();
+                    if (selectedPerson !== "") {
+                        $(all_selects[y]).find("option[value='" + selectedPerson + "']").attr("disabled",
+                            "disabled");
+                    }
+                }
+            }
+        }
+
+        $(document).on('change', '.product-dropdown', function(e) {
+            disableSelection();
         });
     </script>
 @endpush

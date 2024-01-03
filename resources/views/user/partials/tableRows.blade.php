@@ -43,7 +43,7 @@
     </tr>
 @empty
     <tr class="border-b dark:border-neutral-500">
-        <td class="text-center py-4 px-4 font-medium text-black-700 dark:text-white-700 xl:pl-11" colspan="4">
+        <td class="no-records" colspan="4">
             No records
         </td>
     </tr>

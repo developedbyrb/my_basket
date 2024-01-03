@@ -3,21 +3,21 @@
         @csrf
 
         <div class="form-group">
-            <x-input-label for="name" :value="__('Name')" />
+            <x-input-label for="name" :value="__('Name')" :required="true" />
             <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" autofocus
                 autocomplete="name" />
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
         <div class="mt-4 form-group">
-            <x-input-label for="email" :value="__('Email')" />
+            <x-input-label for="email" :value="__('Email')" :required="true" />
             <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')"
                 autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
         <div class="mt-4 form-group">
-            <label for="role_id" class="form-label">Role</label>
+            <x-input-label for="role_id" :value="__('User Role')" :required="true" />
             <select id="role_id" class="custom-input-text" name="role_id">
                 <option selected value="">Select role</option>
                 @foreach ($roles as $role)
@@ -29,20 +29,16 @@
         </div>
 
         <div class="mt-4 form-group">
-            <x-input-label for="password" :value="__('Password')" />
-
+            <x-input-label for="password" :value="__('Password')" :required="true" />
             <x-text-input id="password" class="block mt-1 w-full" type="password" name="password"
                 autocomplete="new-password" />
-
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
         <div class="mt-4 form-group">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
+            <x-input-label for="password_confirmation" :value="__('Confirm Password')" :required="true" />
             <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password"
                 name="password_confirmation" autocomplete="new-password" />
-
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 

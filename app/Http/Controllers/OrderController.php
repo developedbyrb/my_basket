@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Http\Requests\StoreOrderRequest;
 use App\Models\Cart;
 use App\Models\Order;
@@ -11,8 +12,10 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
@@ -102,5 +105,34 @@ class OrderController extends Controller
             'created_by' => Auth::id()
         ]);
         return response()->json(['success' => true, 'message' => 'Product added to cart!']);
+    }
+
+    public function destroy(Request $request, string $id): JsonResponse
+    {
+        $orderDetails = Order::find($id);
+        if ($orderDetails) {
+            $shopDetails = ShopProduct::where('shop_id', $orderDetails->shop_id)
+                ->where('product_id', $orderDetails->product_id)->first();
+            if ($shopDetails) {
+                $updatedQty = $shopDetails->stock_qty + $orderDetails->qty;
+                $shopDetails->update(['stock_qty' => $updatedQty]);
+            }
+            $orderDetails->update([
+                'status' => 4,
+                'cancelled_reason' => $request->input('reason')
+            ]);
+
+            if ($request->file('cancelled_reason_image')) {
+                $name = preg_replace('/\s+/', '', $orderDetails->id) . '_' . time();
+                $folder = '/cancel-orders/' . $orderDetails->id . '/';
+                Helper::uploadOne($request->file('cancelled_reason_image'), $folder, 'public', $name);
+
+                $filePath = $folder . $name . '.' . $request->file('cancelled_reason_image')->clientExtension();
+                Order::find($id)->update(['cancelled_reason_image' => $filePath]);
+            }
+            return response()->json(['message' => 'record deleted successfully'], 200);
+        } else {
+            return response()->json(['message' => 'order not found'], 400);
+        }
     }
 }

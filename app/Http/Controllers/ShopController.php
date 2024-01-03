@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Models\Product;
 use App\Models\Shop;
 use App\Models\ShopAddress;
@@ -64,8 +65,8 @@ class ShopController extends Controller
 
         if ($request->file('image')) {
             $name = preg_replace('/\s+/', '', $shop->name) . '_' . time();
-            $folder = '/shop$shops/' . $shop->id . '/';
-            $this->uploadOne($request->file('image'), $folder, 'public', $name);
+            $folder = '/shops/' . $shop->id . '/';
+            Helper::uploadOne($request->file('image'), $folder, 'public', $name);
 
             $filePath = $folder . $name . '.' . $request->file('image')->clientExtension();
             Shop::find($shop->id)->update(['image' => $filePath]);
@@ -162,8 +163,8 @@ class ShopController extends Controller
 
             if ($request->file('image')) {
                 $name = preg_replace('/\s+/', '', $shop->name) . '_' . time();
-                $folder = '/shop$shops/' . $shop->id . '/';
-                $this->uploadOne($request->file('image'), $folder, 'public', $name);
+                $folder = '/shops/' . $shop->id . '/';
+                Helper::uploadOne($request->file('image'), $folder, 'public', $name);
 
                 $filePath = $folder . $name . '.' . $request->file('image')->clientExtension();
                 Shop::find($shop->id)->update(['image' => $filePath]);
@@ -238,7 +239,7 @@ class ShopController extends Controller
                             $pivotQuery->where('stock_qty', '>', 0);
                         });
                 })->get();
-            $returnHTML = view('searchCard')->with('shops', $shops)->render();
+            $returnHTML = view('search-card')->with('shops', $shops)->render();
             $response = [
                 'success' => true,
                 'data' => [
@@ -250,11 +251,5 @@ class ShopController extends Controller
         } else {
             return response()->json(['message' => 'no search found.'], 404);
         }
-    }
-
-    public function uploadOne(UploadedFile $uploadedFile, $folder = null, $disk = 'public', $filename = null)
-    {
-        $name = !is_null($filename) ? $filename : Str::random(25);
-        return $uploadedFile->storeAs($folder, $name . '.' . $uploadedFile->clientExtension(), $disk);
     }
 }

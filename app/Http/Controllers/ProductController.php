@@ -2,23 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
+use App\Http\Requests\StoreProductRequest;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ShopProduct;
+use App\Services\ProductService;
+use App\Traits\ImageUpload;
+use Illuminate\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Str;
+use Illuminate\Http\Response;
 
 class ProductController extends Controller
 {
+    use ImageUpload;
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): View | Response
     {
         $products = Product::latest()->get();
         if ($request->ajax()) {
@@ -38,55 +41,32 @@ class ProductController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): View
     {
         $categories = Category::select('id', 'name')->get();
-        $returnHTML = view('product.partials.addCategories')->with('categories', $categories)->render();
-        $response = [
-            'success' => true,
-            'data' => [
-                'html' => $returnHTML
-            ],
-            'message' => 'Product form data fetch successfully.'
-        ];
-        return response($response);
+        return view('product.partials.upsertProduct', compact('categories'));
+        // $returnHTML = view('product.partials.addCategories')->with('categories', $categories)->render();
+        // $response = [
+        //     'success' => true,
+        //     'data' => [
+        //         'html' => $returnHTML
+        //     ],
+        //     'message' => 'Product form data fetch successfully.'
+        // ];
+        // return response($response);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request, ProductService $productService): Response
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'categories' => 'required',
-            'image' => 'required|mimes:png,jpg,jpeg|max:2048',
-        ]);
+        $product = Product::create($request->validated());
 
-        $product = Product::create([
-            'name' => $request->input('name'),
-            'created_by' => Auth::id()
-        ]);
+        $uploadedImage = '/' . $this->upload($request, 'image', 'products', $product);
+        Product::find($product->id)->update(['image' => $uploadedImage]);
 
-        if ($request->file('image')) {
-            $name = preg_replace('/\s+/', '', $product->name) . '_' . time();
-            $folder = '/products/' . $product->id . '/';
-            $this->uploadOne($request->file('image'), $folder, 'public', $name);
-
-            $filePath = $folder . $name . '.' . $request->file('image')->clientExtension();
-            Product::find($product->id)->update(['image' => $filePath]);
-        }
-
-        if (count($request->input('categories')) > 0) {
-            $category = $request->input('categories');
-            $categoryArray = explode(",", $category[0]);
-            foreach ($categoryArray as $category) {
-                ProductCategory::create([
-                    'product_id' => $product->id,
-                    'category_id' => $category
-                ]);
-            }
-        }
+        $productService->addProductCategory($product, $request);
         return response(['message' => 'Product Created Successfully', 'success' => true]);
     }
 
@@ -148,7 +128,7 @@ class ProductController extends Controller
             if ($request->file('image')) {
                 $name = preg_replace('/\s+/', '', $product->name) . '_' . time();
                 $folder = '/products/' . $product->id . '/';
-                $this->uploadOne($request->file('image'), $folder, 'public', $name);
+                Helper::uploadOne($request->file('image'), $folder, 'public', $name);
 
                 $filePath = $folder . $name . '.' . $request->file('image')->clientExtension();
                 Product::find($product->id)->update(['image' => $filePath]);
@@ -186,12 +166,6 @@ class ProductController extends Controller
         ShopProduct::where('product_id', $id)->delete();
         $product->delete();
         return response()->json(['message' => 'Product deleted successfully.']);
-    }
-
-    public function uploadOne(UploadedFile $uploadedFile, $folder = null, $disk = 'public', $filename = null)
-    {
-        $name = !is_null($filename) ? $filename : Str::random(25);
-        return $uploadedFile->storeAs($folder, $name . '.' . $uploadedFile->clientExtension(), $disk);
     }
 
     public function addToCart(Request $request, string $id): JsonResponse

@@ -4,7 +4,7 @@
     @if (\Helper::hasPermissionToView('create-shops'))
         <div class="w-full flex flex-row-reverse">
             <a href="{{ route('shops.create') }}" class="custom-create-button">
-                <x-plus-svg />
+                @include('svg.plus')
                 {{ __('Create Shop') }}
             </a>
         </div>
@@ -79,8 +79,7 @@
                         </tr>
                     @empty
                         <tr class="border-b dark:border-neutral-500">
-                            <td class="text-center py-4 px-4 font-medium text-black-700 dark:text-white-700 xl:pl-11"
-                                colspan="4">
+                            <td class="no-records" colspan="4">
                                 No records
                             </td>
                         </tr>
@@ -137,15 +136,13 @@
         $(document).on('click', '.open-confirm-modal', function(e) {
             e.preventDefault();
             const shopId = $(this).data('id');
-            const $modalElement = document.querySelector('#popup-modal');
             $('#popup-modal').attr('data-shop-id', shopId);
-            const modal = new Modal($modalElement, modalOptions);
-            modal.show();
+            openModel('#popup-modal');
         });
 
         $('.modal-cancel-button, .close-modal-icon').on('click', function(e) {
             e.preventDefault();
-            hideModal();
+            closeModel('#popup-modal');
         });
 
         $('.modal-confirm-submit').on('click', function(e) {
@@ -160,7 +157,7 @@
                 type: 'DELETE',
                 dataType: 'json',
                 success: function(response) {
-                    hideModal();
+                    closeModel('#popup-modal');
                     location.reload();
                 },
                 error: function(data) {
@@ -168,19 +165,5 @@
                 }
             });
         });
-
-        function hideModal() {
-            let $modalElement = document.querySelector('#popup-modal');
-            const modal = new Modal($modalElement);
-            modal.hide();
-        }
-
-        function setupAjax() {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-        }
     </script>
 @endpush

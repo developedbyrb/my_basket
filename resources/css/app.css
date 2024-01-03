@@ -3,7 +3,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* @import "select2/dist/css/select2.min.css"; */
 
 @layer base {
     body {
@@ -32,141 +31,12 @@
     }
 }
 
-/* third-party libraries CSS */
-
-.tableCheckbox:checked ~ div span {
-    @apply opacity-100;
-}
-.tableCheckbox:checked ~ div {
-    @apply border-primary bg-primary;
+.plain-text {
+    @apply text-black dark:text-white;
 }
 
-.apexcharts-legend-text {
-    @apply !text-body dark:!text-bodydark;
-}
-.apexcharts-text {
-    @apply !fill-body dark:!fill-bodydark;
-}
-.apexcharts-xcrosshairs {
-    @apply !fill-stroke dark:!fill-strokedark;
-}
-.apexcharts-gridline {
-    @apply !stroke-stroke dark:!stroke-strokedark;
-}
-.apexcharts-series.apexcharts-pie-series path {
-    @apply dark:!stroke-transparent;
-}
-.apexcharts-legend-series {
-    @apply !inline-flex gap-1.5;
-}
-.apexcharts-tooltip.apexcharts-theme-light {
-    @apply dark:!border-strokedark dark:!bg-boxdark;
-}
-.apexcharts-tooltip.apexcharts-theme-light .apexcharts-tooltip-title {
-    @apply dark:!border-strokedark dark:!bg-meta-4;
-}
-.apexcharts-xaxistooltip,
-.apexcharts-yaxistooltip {
-    @apply dark:!border-meta-4 dark:!bg-meta-4 dark:!text-bodydark1;
-}
-.apexcharts-xaxistooltip-bottom:after {
-    @apply dark:!border-b-meta-4;
-}
-.apexcharts-xaxistooltip-bottom:before {
-    @apply dark:!border-b-meta-4;
-}
-
-.flatpickr-day.selected {
-    @apply border-primary bg-primary hover:border-primary hover:bg-primary;
-}
-.flatpickr-months .flatpickr-prev-month:hover svg,
-.flatpickr-months .flatpickr-next-month:hover svg {
-    @apply fill-primary;
-}
-.flatpickr-calendar.arrowTop:before {
-    @apply dark:!border-b-boxdark;
-}
-.flatpickr-calendar.arrowTop:after {
-    @apply dark:!border-b-boxdark;
-}
-.flatpickr-calendar {
-    @apply !p-6 dark:!bg-boxdark dark:!text-bodydark dark:!shadow-8 2xsm:!w-auto;
-}
-.flatpickr-day {
-    @apply dark:!text-bodydark dark:hover:!bg-meta-4 dark:hover:!border-meta-4;
-}
-.flatpickr-months .flatpickr-prev-month,
-.flatpickr-months .flatpickr-next-month {
-    @apply !top-7 dark:!fill-white dark:!text-white;
-}
-.flatpickr-months .flatpickr-prev-month.flatpickr-prev-month,
-.flatpickr-months .flatpickr-next-month.flatpickr-prev-month {
-    @apply !left-7;
-}
-.flatpickr-months .flatpickr-prev-month.flatpickr-next-month,
-.flatpickr-months .flatpickr-next-month.flatpickr-next-month {
-    @apply !right-7;
-}
-span.flatpickr-weekday,
-.flatpickr-months .flatpickr-month {
-    @apply dark:!fill-white dark:!text-white;
-}
-.flatpickr-day.inRange {
-    @apply dark:!border-meta-4 dark:!bg-meta-4 dark:!shadow-7;
-}
-.flatpickr-day.selected,
-.flatpickr-day.startRange,
-.flatpickr-day.selected,
-.flatpickr-day.endRange {
-    @apply dark:!text-white;
-}
-
-.map-btn .jvm-zoom-btn {
-    @apply flex h-7.5 w-7.5 items-center justify-center rounded border border-stroke bg-white px-0 pt-0 pb-0.5 text-2xl leading-none text-body hover:border-primary hover:bg-primary hover:text-white dark:border-strokedark dark:text-bodydark dark:hover:border-primary dark:hover:text-white;
-}
-.mapOne .jvm-zoom-btn {
-    @apply left-auto top-auto bottom-0;
-}
-.mapOne .jvm-zoom-btn.jvm-zoomin {
-    @apply right-10;
-}
-.mapOne .jvm-zoom-btn.jvm-zoomout {
-    @apply right-0;
-}
-.mapTwo .jvm-zoom-btn {
-    @apply top-auto bottom-0;
-}
-.mapTwo .jvm-zoom-btn.jvm-zoomin {
-    @apply left-0;
-}
-.mapTwo .jvm-zoom-btn.jvm-zoomout {
-    @apply left-10;
-}
-
-.taskCheckbox:checked ~ .box span {
-    @apply opacity-100;
-}
-.taskCheckbox:checked ~ p {
-    @apply line-through;
-}
-.taskCheckbox:checked ~ .box {
-    @apply border-primary bg-primary dark:border-primary;
-}
-
-.custom-input-date::-webkit-calendar-picker-indicator {
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 20px;
-}
-.custom-input-date-1::-webkit-calendar-picker-indicator {
-    background-image: url(../images/icon/icon-calendar.svg);
-}
-.custom-input-date-2::-webkit-calendar-picker-indicator {
-    background-image: url(../images/icon/icon-arrow-down.svg);
-}
-
-[x-cloak] {
-    display: none !important;
+.custom-nav-link {
+    @apply relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white;
 }
 
 .custom-modal {
@@ -177,25 +47,12 @@ span.flatpickr-weekday,
     @apply underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500;
 }
 
-.custom-create-button {
-    @apply flex mb-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800;
-}
-
 .table-wrapper {
     @apply rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1;
 }
 
-.modal-submit-button {
-    @apply text-white ml-2 inline-flex items-center bg-green-700 hover:bg-green-800 focus:ring-4  me-2 mb-2 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-blue-800;
-}
-
 .modal-confirm-submit {
     @apply text-white ml-2 inline-flex items-center bg-red-700 hover:bg-red-800 focus:ring-4  me-2 mb-2 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800;
-}
-
-.modal-cancel-button,
-.modal-confirm-cancel {
-    @apply text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700;
 }
 
 .custom-input-text {
@@ -214,14 +71,6 @@ span.flatpickr-weekday,
     @apply border-b border-[#eee] py-5 px-4 dark:border-strokedark;
 }
 
-.confirm-button {
-    @apply text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center me-2;
-}
-
-.cancel-button {
-    @apply text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600;
-}
-
 .file-input {
     @apply block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400;
 }
@@ -238,10 +87,6 @@ span.flatpickr-weekday,
     @apply relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4;
 }
 
-.nav-link {
-    @apply relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white;
-}
-
 .custom-check-box {
     @apply w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500;
 }
@@ -251,7 +96,7 @@ span.flatpickr-weekday,
 }
 
 .category-option-wrapper {
-    @apply z-10 rounded-lg bg-gray-50 border border-gray-300 shadow w-11/12 dark:bg-gray-700;
+    @apply z-10 rounded-lg bg-gray-50 border border-gray-300 shadow dark:bg-gray-700;
 }
 
 .category-list-wrapper {
@@ -260,16 +105,6 @@ span.flatpickr-weekday,
 
 .margin-class {
     margin-bottom: 12%;
-}
-
-.add-address-button,
-.add-product-button {
-    @apply px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800;
-}
-
-.remove-address-button,
-.remove-product-button {
-    @apply focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900;
 }
 
 .card-wrapper {
@@ -282,10 +117,6 @@ span.flatpickr-weekday,
 
 .custom-search {
     @apply block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
-}
-
-.search-button {
-    @apply text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800;
 }
 
 .view-table-wrapper {
@@ -310,10 +141,6 @@ span.flatpickr-weekday,
 
 .table-custom-title {
     @apply px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white;
-}
-
-.manage-cart-button {
-    @apply inline-flex items-center justify-center h-6 w-6 p-1 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700;
 }
 
 .cart-input {
@@ -354,4 +181,80 @@ span.flatpickr-weekday,
 
 .badge {
     @apply text-sm font-medium me-2 px-2.5 py-0.5 rounded;
+}
+
+.custom-text-area {
+    @apply block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+}
+
+.yellow-badge {
+    @apply bg-yellow-100 text-yellow-800 badge dark:bg-yellow-900 dark:text-yellow-300;
+}
+
+.purple-badge {
+    @apply bg-purple-100 text-purple-800 badge dark:bg-purple-900 dark:text-purple-300;
+}
+
+.red-badge {
+    @apply bg-red-100 text-red-800 badge dark:bg-red-900 dark:text-red-300;
+}
+
+.green-badge {
+    @apply bg-green-100 text-green-800 badge dark:bg-green-900 dark:text-green-300;
+}
+
+.table-headers {
+    @apply py-4 px-4 font-medium plain-text;
+}
+
+.no-records {
+    @apply text-center table-headers xl:pl-11;
+}
+
+.custom-number-input {
+    @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+}
+
+.custom-create-button {
+    @apply flex mb-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800;
+}
+
+.modal-submit-button {
+    @apply text-white ml-2 inline-flex items-center bg-green-700 hover:bg-green-800 focus:ring-4  me-2 mb-2 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-blue-800;
+}
+
+.modal-cancel-button,
+.modal-confirm-cancel {
+    @apply text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700;
+}
+
+.confirm-button {
+    @apply text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center me-2;
+}
+
+.cancel-button {
+    @apply text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600;
+}
+
+.add-address-button,
+.add-product-button,
+.add-option-button {
+    @apply px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800;
+}
+
+.remove-address-button,
+.remove-product-button {
+    @apply focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900;
+}
+
+.search-button {
+    @apply text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800;
+}
+
+.manage-cart-button {
+    @apply inline-flex items-center justify-center h-6 w-6 p-1 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700;
+}
+
+.remove-option-button {
+    @apply px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800;
 }

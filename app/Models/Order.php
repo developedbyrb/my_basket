@@ -17,7 +17,7 @@ class Order extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'expected_delivery_date', 'payment_type', 'qty',
+        'expected_delivery_date', 'payment_type', 'qty', 'cancelled_reason',
         'total_amount', 'shop_id', 'product_id', 'order_by', 'status'
     ];
 

@@ -27,7 +27,7 @@ class UpdateOrderDetails extends Command
      */
     public function handle()
     {
-        Order::whereDate('expected_delivery_date', Carbon::today())->update([
+        Order::where('status', '<>', '4')->whereDate('expected_delivery_date', Carbon::today())->update([
             'status' => 3
         ]);
     }

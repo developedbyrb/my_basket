@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\View\View;
 
 class RoleController extends Controller
@@ -12,11 +12,13 @@ class RoleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): Response | View
+    public function index(Request $request): JsonResponse | View
     {
-        $roles = Role::get();
+        $roles = Role::orderBy('id', 'asc')->get();
         if ($request->ajax()) {
-            $returnHTML = view('role.partials.tableRows')->with('roles', $roles)->render();
+            $page = 'roles';
+            $returnHTML = view('layouts.common.tables.tableRows')->with('rowData', $roles)
+                ->with('page', $page)->render();
             $response = [
                 'success' => true,
                 'data' => [
@@ -24,7 +26,7 @@ class RoleController extends Controller
                 ],
                 'message' => 'Roles list fetched successfully.'
             ];
-            return response($response);
+            return response()->json($response);
         }
         return view('role.index', compact('roles'));
     }
@@ -32,7 +34,7 @@ class RoleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): Response
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:roles'
@@ -42,7 +44,7 @@ class RoleController extends Controller
             'name' => $request->input('name')
         ]);
 
-        return response(['message' => 'Role created Successfully', 'success' => true]);
+        return response()->json(['message' => 'Role created Successfully', 'success' => true]);
     }
 
     /**
@@ -92,7 +94,7 @@ class RoleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
         $role = Role::find($id);
         if (!$role) {

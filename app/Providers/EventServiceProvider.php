@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Attribute;
+use App\Observers\AttributeObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -35,4 +37,13 @@ class EventServiceProvider extends ServiceProvider
     {
         return false;
     }
+
+    /**
+     * The model observers for your application.
+     *
+     * @var array
+     */
+    protected $observers = [
+        Attribute::class => [AttributeObserver::class],
+    ];
 }

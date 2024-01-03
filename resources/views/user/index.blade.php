@@ -4,7 +4,7 @@
     <div class="w-full flex flex-row-reverse">
         @if (\Helper::hasPermissionToView('create-users'))
             <button class="custom-create-button open-user-modal" type="button" data-id="">
-                <x-plus-svg />
+                @include('svg.plus')
                 {{ __('Create User') }}
             </button>
         @endif
@@ -43,37 +43,9 @@
     </div>
 
     <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden custom-modal-wrapper">
-        <div class="relative p-4 w-full max-w-lg max-h-full">
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                    <h3 class="modal-title text-lg font-semibold text-gray-900 dark:text-white"></h3>
-                    <button type="button" class="close-confirm-modal">
-                        <x-cross-svg />
-                        <span class="sr-only">Close modal</span>
-                    </button>
-                </div>
-                <div class="p-4 md:p-5 mt-5 text-center">
-                    <div class="flex items-center">
-                        <svg class="mx-auto mb-4 text-warning-400 w-10 h-10 dark:text-warning-200" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                        </svg>
-                        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                            Are you sure you want to delete this user?
-                        </h3>
-                    </div>
-                </div>
-                <div class="flex justify-end items-center">
-                    <button type="button" class="modal-confirm-cancel">
-                        No, cancel
-                    </button>
-                    <button type="button" class="modal-confirm-submit">
-                        Yes, I'm sure
-                    </button>
-                </div>
-            </div>
-        </div>
+        @include('layouts.common.confirmationPopup', [
+            'message' => 'Are you sure you want to delete this user?',
+        ])
     </div>
 
     <div id="crud-modal" tabindex="-1" aria-hidden="true"
@@ -131,9 +103,6 @@
 
 @push('page-script')
     <script type="module">
-        // Define JS varibales
-        const addHTMLForPut = '<input type="hidden" name="_method" id="putMethod" value="PUT">';
-
         $(document).ready(function() {
             getUserList();
         });
@@ -151,10 +120,8 @@
         $(document).on('click', '.open-confirm-modal', function(e) {
             e.preventDefault();
             const userId = $(this).data('id');
-            const $modalElement = document.querySelector('#popup-modal');
             $('#popup-modal').attr('data-user-id', userId);
-            const modal = new Modal($modalElement);
-            modal.show();
+            openModel('#popup-modal');
         });
 
         $('.modal-submit-button').on('click', function(e) {
@@ -246,9 +213,7 @@
                 success: function(success) {
                     addOptionsToRoleDropdown(success.data.roles);
                     $('#modal-title').html('Create New User');
-                    const $modalElement = document.querySelector('#crud-modal');
-                    const modal = new Modal($modalElement);
-                    modal.show();
+                    openModel('#crud-modal');
                 },
                 error: function(data) {
                     console.error('Custom Error', data);
@@ -274,10 +239,7 @@
                     });
 
                     $('#modal-title').html('Edit User Details');
-
-                    const $modalElement = document.querySelector('#crud-modal');
-                    const modal = new Modal($modalElement);
-                    modal.show();
+                    openModel('#crud-modal');
 
                     $('#userForm').append(addHTMLForPut);
                     $('#userForm').attr('data-user-id', userData['id']);
@@ -340,31 +302,12 @@
         }
 
         function hideModal(modalType) {
-            let $modalElement;
             if (modalType === 'crud') {
                 $('#userForm')[0].reset();
-                $modalElement = document.querySelector('#crud-modal');
+                closeModel('#crud-modal');
             } else {
-                $modalElement = document.querySelector('#popup-modal');
+                closeModel('#popup-modal');
             }
-            const modal = new Modal($modalElement);
-            modal.hide();
-        }
-
-        function setupAjax() {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-        }
-
-        function objectifyForm(formArray) {
-            let returnArray = {};
-            for (let i = 0; i < formArray.length; i++) {
-                returnArray[formArray[i]['name']] = formArray[i]['value'];
-            }
-            return returnArray;
         }
 
         function getUserList() {
@@ -372,6 +315,7 @@
             $.ajax({
                 type: 'GET',
                 url: URL,
+                cache: false,
                 success: function(success) {
                     $('#userTableBody').html(success.data.html);
                 },

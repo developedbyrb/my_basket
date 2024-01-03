@@ -18,8 +18,10 @@ return new class extends Migration
             $table->string('stock_qty')->nullable();
             $table->string('price')->nullable();
             $table->timestamps();
-            $table->foreign('shop_id')->references('id')->on('shops');
-            $table->foreign('product_id')->references('id')->on('products');
+            $table->foreign('shop_id')->references('id')->on('shops')
+                ->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('products')
+                ->onDelete('cascade');
         });
     }
 

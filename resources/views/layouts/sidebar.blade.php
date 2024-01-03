@@ -35,13 +35,102 @@
                             <li>
                                 <a class="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
                                     href="{{ route('users.index') }}"
-                                    @click="selected = (selected === 'User Management' ? '':'User Management')"
+                                    @click="selected = (selected === 'Users' ? '':'Users')"
                                     :class="{
-                                        'bg-graydark dark:bg-meta-4': (selected === 'User Management') && (
-                                            page === 'users')
+                                        'bg-graydark dark:bg-meta-4': (selected === 'Users')
                                     }">
                                     <x-users-svg />
-                                    User Management
+                                    Users
+                                </a>
+                            </li>
+                        @endif
+
+                        @if (\Helper::hasPermissionToView('get-products') || \Helper::hasPermissionToView('get-attributes'))
+                            <li>
+                                <a class="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
+                                    href="javascript:void(0)"
+                                    @click.prevent="selected = (selected === 'Inventory' ? '':'Inventory')"
+                                    :class="{
+                                        'bg-graydark dark:bg-meta-4': (selected === 'Inventory') || (
+                                            page === 'roles')
+                                    }">
+                                    <svg width="18" height="18" class="text-white" aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 22 21">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
+                                            d="M7.24 7.194a24.16 24.16 0 0 1 3.72-3.062m0 0c3.443-2.277 6.732-2.969 8.24-1.46 2.054 2.053.03 7.407-4.522 11.959-4.552 4.551-9.906 6.576-11.96 4.522C1.223 17.658 1.89 14.412 4.121 11m6.838-6.868c-3.443-2.277-6.732-2.969-8.24-1.46-2.054 2.053-.03 7.407 4.522 11.959m3.718-10.499a24.16 24.16 0 0 1 3.719 3.062M17.798 11c2.23 3.412 2.898 6.658 1.402 8.153-1.502 1.503-4.771.822-8.2-1.433m1-6.808a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z" />
+                                    </svg>
+                                    Inventory
+                                    <x-aero />
+                                </a>
+
+                                <div class="overflow-hidden" :class="(selected === 'Inventory') ? 'block' : 'hidden'">
+                                    <ul class="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                                        @if (\Helper::hasPermissionToView('get-attributes'))
+                                            <li>
+                                                <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('attributes.index') ? 'text-white' : '' }}"
+                                                    href="{{ route('attributes.index') }}">
+                                                    Products Attributes
+                                                </a>
+                                            </li>
+                                        @endif
+                                        @if (\Helper::hasPermissionToView('get-products'))
+                                            <li>
+                                                <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('products.index') ? 'text-white' : '' }}"
+                                                    href="{{ route('products.index') }}">
+                                                    Products
+                                                </a>
+                                            </li>
+                                        @endif
+                                    </ul>
+                                </div>
+                            </li>
+                        @endif
+
+                        @if (\Helper::hasPermissionToView('get-categories') || \Helper::hasPermissionToView('get-shops'))
+                            <li>
+                                <a class="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
+                                    href="javascript:void(0)" @click.prevent="selected = (selected === 'Shop' ? '':'Shop')"
+                                    :class="{
+                                        'bg-graydark dark:bg-meta-4': (selected === 'Shop')
+                                    }">
+                                    <x-shopping-svg />
+                                    E-Commerce Management
+                                    <x-aero />
+                                </a>
+
+                                <div class="overflow-hidden" :class="(selected === 'Shop') ? 'block' : 'hidden'">
+                                    <ul class="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                                        @if (\Helper::hasPermissionToView('get-categories'))
+                                            <li>
+                                                <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('categories.index') ? 'text-white' : '' }}"
+                                                    href="{{ route('categories.index') }}">
+                                                    Categories
+                                                </a>
+                                            </li>
+                                        @endif
+                                        @if (\Helper::hasPermissionToView('get-shops'))
+                                            <li>
+                                                <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('shops.index') ? 'text-white' : '' }}"
+                                                    href="{{ route('shops.index') }}">
+                                                    Shops
+                                                </a>
+                                            </li>
+                                        @endif
+                                    </ul>
+                                </div>
+                            </li>
+                        @endif
+
+                        @if (\Helper::hasPermissionToView('get-orders', false))
+                            <li>
+                                <a class="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
+                                    href="{{ route('orders.index') }}"
+                                    @click="selected = (selected === 'orders' ? '':'orders')"
+                                    :class="{
+                                        'bg-graydark dark:bg-meta-4': (selected === 'orders')
+                                    }">
+                                    <x-shop-svg />
+                                    My Orders
                                 </a>
                             </li>
                         @endif
@@ -69,7 +158,7 @@
                                             <li>
                                                 <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('roles.index') ? 'text-white' : '' }}"
                                                     href="{{ route('roles.index') }}">
-                                                    Role Management
+                                                    Roles
                                                 </a>
                                             </li>
                                         @endif
@@ -77,7 +166,7 @@
                                             <li>
                                                 <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('permissions.index') ? 'text-white' : '' }}"
                                                     href="{{ route('permissions.index') }}">
-                                                    Permission Management
+                                                    Permissions
                                                 </a>
                                             </li>
                                         @endif
@@ -91,67 +180,6 @@
                                         @endif
                                     </ul>
                                 </div>
-                            </li>
-                        @endif
-
-                        @if (
-                            \Helper::hasPermissionToView('get-categories') ||
-                                \Helper::hasPermissionToView('get-products') ||
-                                \Helper::hasPermissionToView('get-shops'))
-                            <li>
-                                <a class="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
-                                    href="javascript:void(0)" @click.prevent="selected = (selected === 'Shop' ? '':'Shop')"
-                                    :class="{
-                                        'bg-graydark dark:bg-meta-4': (selected === 'Shop')
-                                    }">
-                                    <x-shopping-svg />
-                                    E-Commerce Management
-                                    <x-aero />
-                                </a>
-
-                                <div class="overflow-hidden" :class="(selected === 'Shop') ? 'block' : 'hidden'">
-                                    <ul class="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                                        @if (\Helper::hasPermissionToView('get-categories'))
-                                            <li>
-                                                <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('categories.index') ? 'text-white' : '' }}"
-                                                    href="{{ route('categories.index') }}">
-                                                    Category Management
-                                                </a>
-                                            </li>
-                                        @endif
-                                        @if (\Helper::hasPermissionToView('get-products'))
-                                            <li>
-                                                <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('products.index') ? 'text-white' : '' }}"
-                                                    href="{{ route('products.index') }}">
-                                                    Product Management
-                                                </a>
-                                            </li>
-                                        @endif
-                                        @if (\Helper::hasPermissionToView('get-shops'))
-                                            <li>
-                                                <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('shops.index') ? 'text-white' : '' }}"
-                                                    href="{{ route('shops.index') }}">
-                                                    Shop Management
-                                                </a>
-                                            </li>
-                                        @endif
-                                    </ul>
-                                </div>
-                            </li>
-                        @endif
-
-                        @if (\Helper::hasPermissionToView('get-orders', false))
-                            <li>
-                                <a class="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
-                                    href="{{ route('orders.index') }}"
-                                    @click="selected = (selected === 'orders' ? '':'orders')"
-                                    :class="{
-                                        'bg-graydark dark:bg-meta-4': (selected === 'orders') && (
-                                            page === 'orders')
-                                    }">
-                                    <x-shop-svg />
-                                    My Orders
-                                </a>
                             </li>
                         @endif
                     @endauth

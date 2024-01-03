@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -64,11 +64,12 @@ class UserController extends Controller
             'password' => ''
         ]);
 
+        event(new Registered($user));
 
         if ($request->file('profile_pic')) {
             $name = preg_replace('/\s+/', '', $user->name) . '_' . time();
             $folder = '/users/' . $user->id . '/';
-            $this->uploadOne($request->file('profile_pic'), $folder, 'public', $name);
+            Helper::uploadOne($request->file('profile_pic'), $folder, 'public', $name);
 
             $filePath = $folder . $name . '.' . $request->file('profile_pic')->clientExtension();
             User::find($user->id)->update(['profile_pic' => $filePath]);
@@ -125,7 +126,7 @@ class UserController extends Controller
             if ($request->file('profile_pic')) {
                 $name = preg_replace('/\s+/', '', $user->name) . '_' . time();
                 $folder = '/users/' . $user->id . '/';
-                $this->uploadOne($request->file('profile_pic'), $folder, 'public', $name);
+                Helper::uploadOne($request->file('profile_pic'), $folder, 'public', $name);
 
                 $filePath = $folder . $name . '.' . $request->file('profile_pic')->clientExtension();
                 User::find($user->id)->update(['profile_pic' => $filePath]);
@@ -148,11 +149,5 @@ class UserController extends Controller
         }
         $user->delete();
         return response()->json(['message' => 'User deleted successfully.']);
-    }
-
-    public function uploadOne(UploadedFile $uploadedFile, $folder = null, $disk = 'public', $filename = null)
-    {
-        $name = !is_null($filename) ? $filename : Str::random(25);
-        return $uploadedFile->storeAs($folder, $name . '.' . $uploadedFile->clientExtension(), $disk);
     }
 }

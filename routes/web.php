@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
@@ -126,6 +127,10 @@ Route::middleware('auth')->group(function () {
         ->middleware('check_permission:delete-categories')
         ->name('categories.destroy');
 
+    Route::post('categories/attributes', [CategoryController::class, 'categoryAttributes'])
+        ->middleware('check_permission:create-products')
+        ->name('categories.attributes');
+
     // List users (index action)
     Route::get('users', [UserController::class, 'index'])
         ->middleware('check_permission:get-users')
@@ -243,6 +248,34 @@ Route::middleware('auth')->group(function () {
     Route::get('orders/checkout', [OrderController::class, 'create'])
         ->middleware('check_permission:store-orders')
         ->name('orders.create');
+
+    // Delete a shop
+    Route::post('orders/{order}', [OrderController::class, 'destroy'])
+        ->name('orders.destroy');
+
+    // CRUD Operation routes for attributes
+    Route::controller(AttributeController::class)->group(function () {
+        Route::get('attributes', 'index')->name('attributes.index')
+            ->middleware('check_permission:get-attributes');
+
+        Route::get('attributes/create', 'create')->name('attributes.create')
+            ->middleware('check_permission:create-attributes');
+
+        Route::post('attributes', 'store')->name('attributes.store')
+            ->middleware('check_permission:create-attributes');
+
+        Route::get('attributes/{attribute}', 'show')->name('attributes.show');
+
+        Route::get('attributes/{attribute}', 'edit')->name('attributes.edit')
+            ->middleware('check_permission:edit-attributes');
+
+        Route::put('attributes/{attribute}', 'update')->name('attributes.update')
+            ->middleware('check_permission:edit-attributes');
+
+        Route::delete('attributes/{attribute}', 'destroy')->name('attributes.destroy')
+            ->middleware('check_permission:delete-attributes');
+    });
+    // END of attributes routes
 });
 
 Route::get('/get-search-shop', [ShopController::class, 'searchShops'])->name('shops.search');
@@ -250,5 +283,9 @@ Route::get('/get-search-shop', [ShopController::class, 'searchShops'])->name('sh
 // Show a single shop
 Route::get('shops/{shop}', [ShopController::class, 'show'])
     ->name('shops.show');
+
+Route::fallback(function () {
+    return view('errors.404');
+});
 
 require __DIR__ . '/auth.php';

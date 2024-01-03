@@ -22,7 +22,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Schema::defaultStringLength(191);
-        require_once app_path('Helpers/PermissionsHelper.php');
 
         Blade::directive('money', function ($amount) {
             return "<?php echo '₹ ' . number_format($amount, 2); ?>";

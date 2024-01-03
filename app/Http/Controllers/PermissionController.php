@@ -15,7 +15,9 @@ class PermissionController extends Controller
     {
         $permissions = Permission::get();
         if ($request->ajax()) {
-            $returnHTML = view('permission.partials.tableRows')->with('permissions', $permissions)->render();
+            $page = 'permissions';
+            $returnHTML = view('layouts.common.tables.tableRows')->with('rowData', $permissions)
+                ->with('page', $page)->render();
             $response = [
                 'success' => true,
                 'data' => [

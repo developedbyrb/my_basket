@@ -3,158 +3,117 @@
 @section('content')
     @if (\Helper::hasPermissionToView('create-products'))
         <div class="w-full flex flex-row-reverse">
-            <button class="custom-create-button open-product-modal" type="button" data-id="">
-                <x-plus-svg />
+            <a href="{{ route('products.create') }}" class="custom-create-button" type="button">
+                @include('svg.plus')
                 {{ __('Create Product') }}
-            </button>
+            </a>
         </div>
     @endif
     <div class="table-wrapper">
         <div class="max-w-full overflow-x-auto">
             <table class="w-full table-auto">
-                <thead>
+                <thead class="h-16">
                     <tr class="bg-gray-200 text-left dark:bg-meta-4">
-                        <th class="min-w-[100px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                        <th class="min-w-[100px] table-headers xl:pl-11">
                             #
                         </th>
-                        <th class="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+                        <th class="min-w-[150px] table-headers">
                             Name
                         </th>
-                        <th class="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+                        <th class="min-w-[150px] table-headers">
                             Categories
                         </th>
-                        <th class="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+                        <th class="min-w-30 max-w-50 table-headers">
+                            Description
+                        </th>
+                        <th class="min-w-[150px] table-headers">
                             Created By
                         </th>
-                        <th class="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                        <th class="min-w-[150px] max-w-90 table-headers">
                             Create At
                         </th>
                         @if (\Helper::hasPermissionToView('edit-products') || \Helper::hasPermissionToView('delete-products'))
-                            <th class="py-4 px-4 font-medium text-black dark:text-white">
+                            <th class="table-headers">
                                 Actions
                             </th>
                         @endif
                     </tr>
                 </thead>
                 <tbody id="productTableBody">
+                    @forelse ($products as $product)
+                        <tr>
+                            <td class="custom-table-row pl-9">
+                                @if ($product->image)
+                                    <img class="w-12 h-12 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500"
+                                        src="{{ asset('storage' . $product->image) }}" alt="{{ $product->name . '-image' }}"
+                                        title="{{ $product->name . '-image' }}">
+                                @else
+                                    <x-upload-svg />
+                                @endif
+                            </td>
+                            <td class="custom-table-row">
+                                <p class="text-black dark:text-white">{{ $product->name }}</p>
+                            </td>
+                            <td class="custom-table-row">
+                                <p class="text-black dark:text-white break-words">
+                                    {{ $product->categories->pluck('name')->implode(', ') }}
+                                </p>
+                            </td>
+                            <td class="custom-table-row">
+                                <p class="text-black dark:text-white break-words">
+                                    {{ Str::limit($product->description, 80) ?? '-' }}</p>
+                            </td>
+                            <td class="custom-table-row">
+                                <p class="text-black dark:text-white">
+                                    {{ $product->createdBy->name }}
+                                </p>
+                            </td>
+                            <td class="custom-table-row">
+                                <p class="text-black dark:text-white">{{ $product->created_at->format('F j, Y') }}</p>
+                            </td>
+                            <td class="custom-table-row">
+                                <div class="flex items-center space-x-3.5">
+                                    @if (
+                                        \Helper::hasPermissionToView('edit-products') &&
+                                            (Auth::user()->hasRole('admin') || Auth::id() === $product->created_by))
+                                        <button class="hover:text-primary open-product-modal"
+                                            data-id="{{ $product->id }}">
+                                            <x-edit-svg />
+                                        </button>
+                                    @endif
+                                    @if (
+                                        \Helper::hasPermissionToView('delete-products') &&
+                                            (Auth::user()->hasRole('admin') || Auth::id() === $product->created_by))
+                                        <button class="hover:text-primary mt-1 open-confirm-modal"
+                                            data-id="{{ $product->id }}">
+                                            <x-remove-svg />
+                                        </button>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr class="border-b dark:border-neutral-500">
+                            <td class="no-records" colspan="4">
+                                No records
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
     </div>
 
     <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden custom-modal-wrapper">
-        <div class="relative p-4 w-full max-w-lg max-h-full">
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                    <h3 class="modal-title text-lg font-semibold text-gray-900 dark:text-white"></h3>
-                    <button type="button" class="close-confirm-modal">
-                        <x-cross-svg />
-                        <span class="sr-only">Close modal</span>
-                    </button>
-                </div>
-                <div class="p-4 md:p-5 mt-5 text-center">
-                    <div class="flex items-center">
-                        <svg class="mx-auto mb-4 text-warning-400 w-10 h-10 dark:text-warning-200" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                        </svg>
-                        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                            Are you sure you want to delete this product?
-                        </h3>
-                    </div>
-                </div>
-                <div class="flex justify-end items-center">
-                    <button type="button" class="modal-confirm-cancel">
-                        No, cancel
-                    </button>
-                    <button type="button" class="modal-confirm-submit">
-                        Yes, I'm sure
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="crud-modal" tabindex="-1" aria-hidden="true"
-        class="hidden overflow-y-auto overflow-x-hidden custom-modal-wrapper">
-        <div class="relative p-4 w-full max-w-2xl max-h-full">
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                    <h3 class="modal-title text-lg font-semibold text-gray-900 dark:text-white" id="modal-title">
-                        Create New Product
-                    </h3>
-                    <button type="button" class="close-modal-icon">
-                        <x-cross-svg />
-                        <span class="sr-only">Close modal</span>
-                    </button>
-                </div>
-                <div>
-                    <form class="p-4 md:p-5" id="productForm">
-                        <div class="grid gap-4 mb-4 grid-cols-2">
-                            <div class="col-span-2 form-group">
-                                <label for="name" class="form-label">Name<span style="color:red"> *</span></label>
-                                <input type="text" name="name" id="name" class="custom-input-text"
-                                    placeholder="Type product name">
-                            </div>
-                            <div class="col-span-2 form-group">
-                                <label for="category" class="form-label">
-                                    Category<span style="color:red"> *</span>
-                                </label>
-                                <button id="dropdownSearchButton" data-dropdown-toggle="dropdownSearch"
-                                    data-dropdown-placement="bottom" class="custom-input-text text-left" type="button">
-                                    <span class="flex justify-between items-center">
-                                        Select Category
-                                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                            viewBox="0 0 10 6" class="w-2.5 h-2.5 ms-3">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2" d="m1 1 4 4 4-4" />
-                                        </svg>
-                                    </span>
-                                </button>
-
-                                <!-- Dropdown menu -->
-                                <div id="dropdownSearch" class="category-option-wrapper hidden">
-                                </div>
-                                <span id="category-error" class="invalid-feedback"></span>
-                            </div>
-                            <div class="col-span-2 form-group">
-                                <label class="form-label" for="product_image">Image<span style="color:red"> *</span></label>
-                                <input class="file-input" id="product_image" type="file" name="image"
-                                    aria-describedby="product_image">
-                            </div>
-                        </div>
-                        <div class="flex flex-row-reverse mt-5">
-                            <button type="button" class="modal-submit-button">
-                                Save
-                            </button>
-                            <button type="button" class="modal-cancel-button">
-                                Cancel
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+        @include('layouts.common.confirmationPopup', [
+            'message' => 'Are you sure you want to delete this product?',
+        ])
     </div>
 @endsection
 
 @push('page-script')
     <script type="module">
-        // Define JS varibales
-        const addHTMLForPut = '<input type="hidden" name="_method" id="putMethod" value="PUT">';
-        const modalOptions = {
-            placement: 'center-center',
-            backdrop: 'static',
-            backdropClasses: 'bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40',
-            closable: false,
-        };
         let selectedCategories = [];
-
-        $(document).ready(function() {
-            getProductList();
-        });
-
         $(document).on('click', '.open-product-modal', function(e) {
             e.preventDefault();
             const productId = $(this).data('id');
@@ -169,9 +128,7 @@
             e.preventDefault();
             const productId = $(this).data('id');
             $('#popup-modal').data('product-id', productId);
-            const $modalElement = document.querySelector('#popup-modal');
-            const modal = new Modal($modalElement, modalOptions);
-            modal.show();
+            openModel('#popup-modal');
         });
 
         $(document).on('change', '.category-selection', function(e) {
@@ -291,9 +248,7 @@
                 success: function(success) {
                     $('#dropdownSearch').html(success.data.html);
                     $('#modal-title').html('Create New Product');
-                    const $modalElement = document.querySelector('#crud-modal');
-                    const modal = new Modal($modalElement, modalOptions);
-                    modal.show();
+                    openModel('#crud-modal');
                 },
                 error: function(data) {
                     console.error('Custom Error', data);
@@ -322,10 +277,7 @@
                         selectedCategories.push($(this).data('value'));
                     });
                     $('#modal-title').html('Edit Product Details');
-
-                    const $modalElement = document.querySelector('#crud-modal');
-                    const modal = new Modal($modalElement, modalOptions);
-                    modal.show();
+                    openModel('#crud-modal');
 
                     $('#productForm').append(addHTMLForPut);
                     $('#productForm').attr('data-product-id', productData['id']);
@@ -366,7 +318,10 @@
             }
             //override values for categories
             formData.delete('categories[]');
-            formData.append('categories[]', selectedCategories);
+            for (var i = 0; i < selectedCategories.length; i++) {
+                formData.append('categories[]', selectedCategories[i]);
+            }
+            debugger;
             $.ajax({
                 url: postURL,
                 type: 'POST',
@@ -389,31 +344,12 @@
         }
 
         function hideModal(modalType) {
-            let $modalElement;
             if (modalType === 'crud') {
                 $('#productForm')[0].reset();
-                $modalElement = document.querySelector('#crud-modal');
+                closeModel('#crud-modal');
             } else {
-                $modalElement = document.querySelector('#popup-modal');
+                closeModel('#popup-modal');
             }
-            const modal = new Modal($modalElement);
-            modal.hide();
-        }
-
-        function setupAjax() {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-        }
-
-        function objectifyForm(formArray) {
-            let returnArray = {};
-            for (let i = 0; i < formArray.length; i++) {
-                returnArray[formArray[i]['name']] = formArray[i]['value'];
-            }
-            return returnArray;
         }
     </script>
 @endpush

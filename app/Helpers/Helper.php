@@ -2,6 +2,9 @@
 
 namespace App\Helpers;
 
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
+
 class Helper
 {
     public static function hasPermissionToView($permissionName, $isAccessByAdmin = true): bool
@@ -23,5 +26,11 @@ class Helper
         }
 
         return false;
+    }
+
+    public static function uploadOne(UploadedFile $uploadedFile, $folder = null, $disk = 'public', $filename = null)
+    {
+        $name = !is_null($filename) ? $filename : Str::random(25);
+        return $uploadedFile->storeAs($folder, $name . '.' . $uploadedFile->clientExtension(), $disk);
     }
 }
