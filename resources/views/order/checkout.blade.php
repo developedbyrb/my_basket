@@ -30,15 +30,15 @@
                 @forelse ($cartItems as $id => $cartItem)
                     <tr class="table-rows">
                         <td class="p-4">
-                            <img src="{{ asset('storage' . $cartItem->product->image) }}"
+                            {{-- <img src="{{ asset('storage' . $cartItem->product->image) }}"
                                 class="w-16 md:w-32 max-w-full max-h-full" alt="{{ $cartItem->product->name }}-image"
-                                title="{{ $cartItem->product->name }}-image">
+                                title="{{ $cartItem->product->name }}-image"> --}}
                         </td>
                         <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                            {{ $cartItem->product->name }}
+                            {{-- {{ $cartItem->product->name }} --}}
                         </td>
                         <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                            {{ $cartItem->shop->name }}
+                            {{-- {{ $cartItem->shop->name }} --}}
                         </td>
                         <td class="px-6 py-4">
                             {{ $cartItem->qty }}
@@ -47,10 +47,10 @@
                             {{ $cartItem->expected_delivery_date->format('F j, Y') }}
                         </td>
                         <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                            @php
+                            {{-- @php
                                 $total = $total + $cartItem->qty * $cartItem->product->shopProduct[0]->price;
                             @endphp
-                            @money($cartItem->qty * $cartItem->product->shopProduct[0]->price)
+                            @money($cartItem->qty * $cartItem->product->shopProduct[0]->price) --}}
                         </td>
                     </tr>
                 @empty
@@ -163,7 +163,7 @@
                                         name="payment_type"
                                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                                     <label for="horizontal-list-radio-id"
-                                        class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                        class="w-full py-3 ms-2 text-sm font-medium text-gray-400 dark:text-gray-500">
                                         Card
                                     </label>
                                 </div>
@@ -174,7 +174,7 @@
                                         name="payment_type"
                                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                                     <label for="horizontal-list-radio-military"
-                                        class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                        class="w-full py-3 ms-2 text-sm font-medium text-gray-400 dark:text-gray-500">
                                         Net Banking
                                     </label>
                                 </div>
@@ -185,7 +185,7 @@
                                         name="payment_type"
                                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                                     <label for="horizontal-list-radio-passport"
-                                        class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                        class="w-full py-3 ms-2 text-sm font-medium text-gray-400 dark:text-gray-500">
                                         UPI
                                     </label>
                                 </div>
@@ -232,6 +232,7 @@
                     $(element).removeClass('is-invalid');
                 }
             });
+
             $('input[name^="addresses"]').filter('input[name$="[house_no]"]').each(function() {
                 $(this).rules("add", {
                     required: true,
@@ -240,6 +241,7 @@
                     }
                 });
             });
+
             $('input[name^="addresses"]').filter('input[name$="[area]"]').each(function() {
                 $(this).rules("add", {
                     required: true,

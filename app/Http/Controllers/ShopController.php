@@ -3,14 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
+use App\Http\Requests\StoreShopRequest;
 use App\Models\Product;
 use App\Models\Shop;
 use App\Models\ShopAddress;
 use App\Models\ShopProduct;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 
 class ShopController extends Controller
@@ -30,34 +29,15 @@ class ShopController extends Controller
     public function create()
     {
         $products = Product::get();
-        return view('shop.partials.upsert', compact('products'));
+        return view('shop.sections.upsert-shop', compact('products'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreShopRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'image' => 'required|mimes:png,jpg,jpeg|max:2048',
-            'addresses.*.house_no' => 'required',
-            'addresses.*.area' => 'required',
-            'addresses.*.city' => 'required',
-            'addresses.*.pincode' => 'required',
-            'addresses.*.state' => 'required',
-            'addresses.*.country' => 'required',
-            'products.*.product_id' => 'required',
-            'products.*.qty' => 'required',
-            'products.*.price' => 'required'
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
-
+        dd($request->validated());
         $shop = Shop::create([
             'name' => $request->input('name'),
             'created_by' => Auth::id()

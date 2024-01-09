@@ -12,6 +12,7 @@ use App\Services\ProductService;
 use App\Traits\ImageUpload;
 use Illuminate\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -24,17 +25,6 @@ class ProductController extends Controller
     public function index(Request $request): View | Response
     {
         $products = Product::latest()->get();
-        if ($request->ajax()) {
-            $returnHTML = view('product.partials.tableRows')->with('products', $products)->render();
-            $response = [
-                'success' => true,
-                'data' => [
-                    'html' => $returnHTML
-                ],
-                'message' => 'Product list fetched successfully.'
-            ];
-            return response($response);
-        }
         return view('product.index', compact('products'));
     }
 
@@ -44,30 +34,22 @@ class ProductController extends Controller
     public function create(): View
     {
         $categories = Category::select('id', 'name')->get();
-        return view('product.partials.upsertProduct', compact('categories'));
-        // $returnHTML = view('product.partials.addCategories')->with('categories', $categories)->render();
-        // $response = [
-        //     'success' => true,
-        //     'data' => [
-        //         'html' => $returnHTML
-        //     ],
-        //     'message' => 'Product form data fetch successfully.'
-        // ];
-        // return response($response);
+        return view('product.sections.upsert-product', compact('categories'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProductRequest $request, ProductService $productService): Response
+    public function store(StoreProductRequest $request): RedirectResponse
     {
         $product = Product::create($request->validated());
 
+        // upload product image
         $uploadedImage = '/' . $this->upload($request, 'image', 'products', $product);
         Product::find($product->id)->update(['image' => $uploadedImage]);
 
-        $productService->addProductCategory($product, $request);
-        return response(['message' => 'Product Created Successfully', 'success' => true]);
+        $message = 'Product created successfully';
+        return redirect()->route('products.index')->with('alert-success', $message);
     }
 
     /**
@@ -75,17 +57,17 @@ class ProductController extends Controller
      */
     public function show(Request $request, string $id)
     {
-        $shopId = $request->input('shop_id');
-        $product = ShopProduct::with('productDetails')->where('product_id', $id)->where('shop_id', $shopId)->first();
-        $returnHTML = view('product.partials.addToCartTable')->with('product', $product)->render();
-        $response = [
-            'success' => true,
-            'data' => [
-                'html' => $returnHTML
-            ],
-            'message' => 'Product Details fetch successfully.'
-        ];
-        return response($response);
+        $productDetails = Product::with([
+            'skus.attributeOptions' => function ($query) {
+                $query->with('attribute')->orderBy('id', 'desc');
+            }
+        ])->with('details', 'categories')->find($id);
+        $fields = [];
+        $attributeColumns = $productDetails->skus[0]->attributeOptions;
+        foreach ($attributeColumns as $key => $value) {
+            array_push($fields, $value->attribute->name);
+        }
+        return view('product.sections.view-product', compact('productDetails', 'fields'));
     }
 
     /**
@@ -93,19 +75,9 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        $product = Product::find($id);
+        $productDetails = Product::with('details', 'categories')->find($id);
         $categories = Category::select('id', 'name')->get();
-        $returnHTML = view('product.partials.addCategories')
-            ->with(['categories' => $categories, 'product' => $product])->render();
-        $response = [
-            'success' => true,
-            'data' => [
-                'html' => $returnHTML,
-                'productData' => $product
-            ],
-            'message' => 'Product edit form data fetch successfully.'
-        ];
-        return response($response);
+        return view('product.sections.upsert-product', compact('productDetails', 'categories'));
     }
 
     /**
@@ -168,29 +140,29 @@ class ProductController extends Controller
         return response()->json(['message' => 'Product deleted successfully.']);
     }
 
-    public function addToCart(Request $request, string $id): JsonResponse
+    /**
+     * return html for a listing of the variants.
+     */
+    public function getProductAttributes(Request $request)
     {
-        $shopId = $request->input('shopId');
-        $product = ShopProduct::with('productDetails', 'shopDetails')
-            ->where('product_id', $id)->where('shop_id', $shopId)->first();
-        $cart = session()->get('cart', []);
-        if (isset($cart[$id . '-' . $shopId]) && isset($cart[$id . '-' . $shopId]['shopId']) && $cart[$id . '-' . $shopId]['shopId'] === $shopId) {
-            $cart[$id . '-' . $shopId]['quantity']++;
-            $price = $product->price * $cart[$id . '-' . $shopId]['quantity'];
-            $cart[$id . '-' . $shopId]['price'] = $price;
-        } else {
-            $price = $product->price * $request->input('added_qty');
-            $cart[$id . '-' . $shopId] = [
-                "name" => $product->productDetails->name,
-                "quantity" => $request->input('added_qty'),
-                "shopId" => $shopId,
-                "productId" => $id,
-                "shopName" => $product->shopDetails->name,
-                "price" => $price,
-                "image" => $product->productDetails->image
+        $variants = Category::with('attributes.attributeOptions')
+            ->findMany($request->input('categories'))
+            ->pluck('attributes')
+            ->flatten()
+            ->unique('id');
+        if (count($variants) > 0) {
+            $returnHTML = view('product.partials.add-variants')->with('variants', $variants)
+                ->render();
+            $response = [
+                'success' => true,
+                'data' => [
+                    'html' => $returnHTML
+                ],
+                'message' => 'Product attributes list fetched successfully.'
             ];
+            return response()->json($response);
+        } else {
+            return redirect()->back();
         }
-        session()->put('cart', $cart);
-        return response()->json(['success' => true, 'message' => 'Product added to cart!']);
     }
 }

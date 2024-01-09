@@ -32,4 +32,42 @@ export function closeModel(selector) {
     modal.hide();
 }
 
+export function handleSelectedCategory(value, selectedCategories) {
+    if ($.inArray(value, selectedCategories) === -1) {
+        selectedCategories.push(value);
+    } else {
+        selectedCategories = $.grep(selectedCategories, function (val) {
+            return val !== value;
+        });
+    }
+
+    if (selectedCategories.length > 0 && $('#dropdownSearchButton').hasClass('is-invalid')) {
+        $('#category-error').html('');
+        $('#dropdownSearchButton').removeClass('is-invalid');
+    }
+
+    return selectedCategories;
+}
+
+export function checkCategoryValidation(selectedCategories) {
+    if (selectedCategories && selectedCategories.length > 0) {
+        $('#category-error').html('');
+        $('#dropdownSearchButton').removeClass('is-invalid');
+        return false;
+    } else {
+        $('#category-error').html('Please select at least one category.');
+        $('#dropdownSearchButton').addClass('is-invalid');
+        return true;
+    }
+}
+
+export function requiredAndTrimmed() {
+    return {
+        required: true,
+        normalizer: function (value) {
+            return $.trim(value);
+        }
+    };
+}
+
 export const addHTMLForPut = '<input type="hidden" name="_method" id="putMethod" value="PUT">';

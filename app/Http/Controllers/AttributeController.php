@@ -64,13 +64,13 @@ class AttributeController extends Controller
         $attributeDetails = Attribute::with('attributeOptions', 'categories')->findOrFail($id);
         $categories = Category::get();
 
-        return view('attribute.sections.upsertAttribute', compact('attributeDetails', 'categories'));
+        return view('attribute.sections.upsert-attribute', compact('attributeDetails', 'categories'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id): JsonResponse
+    public function update(Request $request, string $id): RedirectResponse
     {
         $attribute = Attribute::find($id);
         if ($attribute) {
@@ -82,9 +82,11 @@ class AttributeController extends Controller
                 'name' => $request->input('name')
             ]);
 
-            return response()->json(['message' => 'Attribute Updated Successfully', 'success' => true]);
+            $message = "Attribute updated successfully.";
+            return redirect()->route('attributes.index')->with('alert-success', $message);
         } else {
-            return response()->json(['message' => 'Attribute not found', 'success' => false], 404);
+            $message = "Attribute not found.";
+            return redirect()->back()->with('alert-error', $message);
         }
     }
 

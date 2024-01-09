@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class AttributeOptionSku extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'sku_id',
+        'attribute_option_id',
+    ];
+
+    public $timestamps = false;
 }

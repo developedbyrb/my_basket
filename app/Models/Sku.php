@@ -15,6 +15,9 @@ class Sku extends Model
         'product_id',
         'code',
         'price',
+        'is_default',
+        'image',
+        'avail_stock'
     ];
 
     protected function price(): Attribute
@@ -32,6 +35,6 @@ class Sku extends Model
 
     public function attributeOptions(): BelongsToMany
     {
-        return $this->belongsToMany(AttributeOption::class);
+        return $this->belongsToMany(AttributeOption::class, 'attribute_option_skus');
     }
 }

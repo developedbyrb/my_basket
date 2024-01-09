@@ -77,7 +77,7 @@
                                             <li>
                                                 <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('products.index') ? 'text-white' : '' }}"
                                                     href="{{ route('products.index') }}">
-                                                    Products
+                                                    All Products
                                                 </a>
                                             </li>
                                         @endif
@@ -180,6 +180,23 @@
                                         @endif
                                     </ul>
                                 </div>
+                            </li>
+                        @endif
+
+                        @if (\Helper::hasPermissionToView('get-warehouses', false))
+                            <li>
+                                <a class="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
+                                    href="{{ route('warehouses.index') }}"
+                                    @click="selected = (selected === 'Warehouse' ? '':'Warehouse')"
+                                    :class="{ 'bg-graydark dark:bg-meta-4': (selected === 'Warehouse') }">
+                                    <svg width="18" height="18" class="text-white" aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 22 21">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M3 8v10a1 1 0 0 0 1 1h4v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5h4a1 1 0 0 0 1-1V8M1 10l9-9 9 9" />
+                                    </svg>
+                                    My Warehouses
+                                </a>
                             </li>
                         @endif
                     @endauth

@@ -96,32 +96,4 @@ class CategoryController extends Controller
         $category->delete();
         return response()->json(['message' => 'Category deleted successfully.']);
     }
-
-    /**
-     * return html for a listing of the variants.
-     */
-    public function categoryAttributes(Request $request)
-    {
-        $count = $request->input('variantCount');
-        $variants = Category::with('attributes.attributeOptions')
-            ->findMany($request->input('categories'))
-            ->pluck('attributes')
-            ->flatten()
-            ->unique('id');
-        if (count($variants) > 0 && $count > 0) {
-            $returnHTML = view('product.partials.addVariants')->with('variants', $variants)
-                ->with('variantCount', $count)
-                ->render();
-            $response = [
-                'success' => true,
-                'data' => [
-                    'html' => $returnHTML
-                ],
-                'message' => 'Product attributes list fetched successfully.'
-            ];
-            return response()->json($response);
-        } else {
-            return redirect()->back();
-        }
-    }
 }

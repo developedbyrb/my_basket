@@ -9,6 +9,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,7 +41,6 @@ Route::middleware('auth')->group(function () {
     Route::post('access-management', [RolePermissionController::class, 'store'])
         ->middleware('check_permission:save-access')
         ->name('access-management.store');
-
 
     // List roles (index action)
     Route::get('roles', [RoleController::class, 'index'])
@@ -127,10 +127,6 @@ Route::middleware('auth')->group(function () {
         ->middleware('check_permission:delete-categories')
         ->name('categories.destroy');
 
-    Route::post('categories/attributes', [CategoryController::class, 'categoryAttributes'])
-        ->middleware('check_permission:create-products')
-        ->name('categories.attributes');
-
     // List users (index action)
     Route::get('users', [UserController::class, 'index'])
         ->middleware('check_permission:get-users')
@@ -175,13 +171,17 @@ Route::middleware('auth')->group(function () {
         ->middleware('check_permission:create-products')
         ->name('products.create');
 
+    Route::post('variants/attributes', [ProductController::class, 'getProductAttributes'])
+        ->middleware('check_permission:create-products')
+        ->name('variants.attributes');
+
     // Store a new product
     Route::post('products', [ProductController::class, 'store'])
-        ->middleware('check_permission:save-products')
+        ->middleware('check_permission:create-products')
         ->name('products.store');
 
     // Show a single product
-    Route::post('products/{product}', [ProductController::class, 'show'])
+    Route::get('products/{product}', [ProductController::class, 'show'])
         ->name('products.show');
 
     // Show the form to edit a product
@@ -233,6 +233,7 @@ Route::middleware('auth')->group(function () {
     Route::get('cart', [OrderController::class, 'getCartDetails'])->name('products.viewCart');
 
     Route::post('products/cart/{product}', [OrderController::class, 'addToCart'])
+        ->middleware('check_permission:add-to-cart,false')
         ->name('products.addToCart');
 
     // List all orders
@@ -242,7 +243,7 @@ Route::middleware('auth')->group(function () {
 
     // Show the shop creation form
     Route::post('orders', [OrderController::class, 'store'])
-        ->middleware('check_permission:store-orders')
+        ->middleware('check_permission:store-orders,false')
         ->name('orders.store');
 
     Route::get('orders/checkout', [OrderController::class, 'create'])
@@ -276,6 +277,26 @@ Route::middleware('auth')->group(function () {
             ->middleware('check_permission:delete-attributes');
     });
     // END of attributes routes
+
+    Route::post('cart/{cart}', [OrderController::class, 'destroyCartItem'])
+        ->middleware('check_permission:add-to-cart,false')
+        ->name('products.destroyFromCart');
+
+    Route::post('checkout/cart', [OrderController::class, 'cartCheckout'])
+        ->middleware('check_permission:add-to-cart,false')
+        ->name('cart.cartCheckout');
+
+    // CRUD Operation routes for warehouses
+    Route::prefix('warehouses')->name('warehouses.')->controller(WarehouseController::class)->group(function () {
+        Route::get('', 'index')->name('index')->middleware('check_permission:get-warehouses');
+        Route::get('/create', 'create')->name('create')->middleware('check_permission:create-warehouses');
+        Route::post('', 'store')->name('store')->middleware('check_permission:create-warehouses');
+        Route::get('/{warehouse}', 'show')->name('show');
+        Route::get('/{warehouse}', 'edit')->name('edit')->middleware('check_permission:edit-warehouses');
+        Route::put('/{warehouse}', 'update')->name('update')->middleware('check_permission:edit-warehouses');
+        Route::delete('/{warehouse}', 'destroy')->name('destroy')->middleware('check_permission:delete-warehouses');
+    });
+    // END of warehouses routes
 });
 
 Route::get('/get-search-shop', [ShopController::class, 'searchShops'])->name('shops.search');

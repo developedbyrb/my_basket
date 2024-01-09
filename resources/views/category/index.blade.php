@@ -107,12 +107,7 @@
             e.preventDefault();
             $("#categoryForm").validate({
                 rules: {
-                    name: {
-                        required: true,
-                        normalizer: function(value) {
-                            return $.trim(value);
-                        }
-                    }
+                    name: requiredAndTrimmed()
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {

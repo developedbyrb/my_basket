@@ -5,7 +5,8 @@ return [
     'APP_ROLES' => [
         ['name' =>  'Admin'],
         ['name' => 'Shopper'],
-        ['name' => 'Shopkeeper']
+        ['name' => 'Shopkeeper'],
+        ['name' => 'Supplier']
     ],
     'APP_PERMISSIONS' => [
         ['name' =>  'get-roles'],
@@ -33,7 +34,15 @@ return [
         ['name' => 'edit-shops'],
         ['name' => 'delete-shops'],
         ['name' => 'get-access'],
-        ['name' => 'save-access']
+        ['name' => 'save-access'],
+        ['name' => 'get-attributes'],
+        ['name' => 'create-attributes'],
+        ['name' => 'edit-attributes'],
+        ['name' => 'delete-attributes'],
+        ['name' => 'get-warehouses'],
+        ['name' => 'create-warehouses'],
+        ['name' => 'edit-warehouses'],
+        ['name' => 'delete-warehouses']
     ],
     'PAYMENT_METHODS' => [
         1 => 'COD',
@@ -55,5 +64,8 @@ return [
     'PRODUCT_STATE' => [
         1 => 'New',
         2 => 'Refurbished'
+    ],
+    'GEO_GRAPHIC_STATES' => [
+        'ap' => 'Andhra Pradesh',
     ]
 ];

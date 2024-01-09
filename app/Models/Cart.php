@@ -16,7 +16,7 @@ class Cart extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'expected_delivery_date', 'qty', 'shop_id', 'product_id', 'created_by'
+        'expected_delivery_date', 'qty', 'shop_id', 'sku_id', 'created_by'
     ];
 
     public function shop(): BelongsTo
@@ -27,5 +27,10 @@ class Cart extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function sku(): BelongsTo
+    {
+        return $this->belongsTo(Sku::class);
     }
 }

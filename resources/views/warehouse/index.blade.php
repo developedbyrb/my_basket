@@ -1,12 +1,12 @@
 @extends('layouts.table')
 
 @section('table')
-    <div class="attribute-table">
+    <div class="warehouse-table">
         <div class="w-full flex flex-row-reverse">
-            @if (\Helper::hasPermissionToView('create-attributes'))
-                <a href="{{ route('attributes.create') }}" class="custom-create-button" type="button">
+            @if (\Helper::hasPermissionToView('create-warehouses'))
+                <a href="{{ route('warehouses.create') }}" class="custom-create-button" type="button">
                     @include('svg.plus')
-                    {{ __('Create Attribute') }}
+                    {{ __('Create Warehouse') }}
                 </a>
             @endif
         </div>
@@ -15,60 +15,52 @@
             <table class="w-full table-auto">
                 <thead>
                     <tr class="bg-gray-200 text-left dark:bg-meta-4">
-                        <th class="min-w-[70px] table-headers xl:pl-11">
-                            Sr No.
+                        <th class="table-headers xl:pl-11">
+                            #
                         </th>
-                        <th class="min-w-[150px] table-headers">
+                        <th class="table-headers">
                             Name
                         </th>
                         <th class="min-w-[150px] table-headers">
-                            Categories
-                        </th>
-                        <th class="min-w-[150px] table-headers">
-                            Options
+                            Default Address
                         </th>
                         <th class="min-w-[120px] table-headers">
                             Create At
                         </th>
-                        @if (\Helper::hasPermissionToView('edit-attributes') || \Helper::hasPermissionToView('delete-attributes'))
+                        @if (\Helper::hasPermissionToView('edit-warehouses') || \Helper::hasPermissionToView('delete-warehouses'))
                             <th class="table-headers">
                                 Actions
                             </th>
                         @endif
                     </tr>
                 </thead>
-                <tbody id="attributeTableBody">
-                    @forelse ($attributes as $attribute)
+                <tbody id="wareHouseTable">
+                    @forelse ($warehouses as $warehouse)
                         <tr>
                             <td class="custom-table-row pl-9">
-                                <p class="plain-text">{{ $attribute->id }}</p>
+                                <p class="plain-text">{{ $warehouse->id }}</p>
                             </td>
                             <td class="custom-table-row">
-                                <p class="plain-text">{{ $attribute->name }}</p>
-                            </td>
-                            <td class="custom-table-row">
-                                <p class="plain-text">
-                                    {{ $attribute->categories->pluck('name')->implode(', ') }}
-                                </p>
+                                <p class="plain-text">{{ $warehouse->name }}</p>
                             </td>
                             <td class="custom-table-row">
                                 <p class="plain-text">
-                                    {{ $attribute->attributeOptions->pluck('value')->implode(', ') }}
+                                    {{ $warehouse->categories->pluck('name')->implode(', ') }}
                                 </p>
                             </td>
                             <td class="custom-table-row">
-                                <p class="plain-text">{{ $attribute->created_at->format('F j, Y') }}</p>
+                                <p class="plain-text">{{ $warehouse->created_at->format('F j, Y') }}</p>
                             </td>
                             <td class="custom-table-row">
                                 <div class="flex items-center space-x-3.5">
-                                    @if (\Helper::hasPermissionToView('edit-attributes'))
-                                        <a href="{{ route('attributes.edit', $attribute->id) }}" class="hover:text-primary">
+                                    @if (\Helper::hasPermissionToView('edit-warehouses'))
+                                        <a href="{{ route('warehouses.edit', $warehouse->id) }}" class="hover:text-primary">
                                             <x-edit-svg />
                                         </a>
                                     @endif
-                                    @if (\Helper::hasPermissionToView('delete-attributes'))
+                                    @if (\Helper::hasPermissionToView('delete-warehouses'))
                                         <button class="hover:text-primary mt-1 open-confirm-modal"
-                                            data-id="{{ $attribute->id }}">
+                                            data-id="{{ $warehouse->id }}">
                                             <x-remove-svg />
                                         </button>
                                     @endif
@@ -89,7 +81,7 @@
 
     <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden custom-modal-wrapper">
         @include('layouts.common.confirmationPopup', [
-            'message' => 'Are you sure you want to delete this attribute?',
+            'message' => 'Are you sure you want to delete this warehouse?',
         ])
     </div>
 @endsection
@@ -98,30 +90,30 @@
     <script type="module">
         $(document).on('click', '.open-confirm-modal', function(e) {
             e.preventDefault();
-            const attributeId = $(this).data('id');
-            $('#popup-modal').attr("data-attribute-id", attributeId);
+            const warehouseId = $(this).data('id');
+            $('#popup-modal').attr("data-warehouse-id", warehouseId);
             openModel('#popup-modal');
         });
 
         $('.modal-confirm-cancel, .close-confirm-modal').on('click', function(e) {
             e.preventDefault();
-            $('#popup-modal').attr('data-attribute-id', '');
+            $('#popup-modal').attr('data-warehouse-id', '');
             closeModel('#popup-modal');
         });
 
         $('.modal-confirm-submit').on('click', function(e) {
             e.preventDefault();
             setupAjax();
-            const attributeId = $('#popup-modal').attr('data-attribute-id');
+            const warehouseId = $('#popup-modal').attr('data-warehouse-id');
 
-            let destroyCatUrl = "{{ route('attributes.destroy', ':id') }}";
-            destroyCatUrl = destroyCatUrl.replace(':id', attributeId);
+            let destroyCatUrl = "{{ route('warehouses.destroy', ':id') }}";
+            destroyCatUrl = destroyCatUrl.replace(':id', warehouseId);
             $.ajax({
                 url: destroyCatUrl,
                 type: 'DELETE',
                 dataType: 'json',
                 success: function(response) {
-                    $('#popup-modal').attr('data-attribute-id', '');
+                    $('#popup-modal').attr('data-warehouse-id', '');
                     closeModel('#popup-modal');
                     location.reload();
                 },

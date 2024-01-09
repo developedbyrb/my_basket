@@ -33,7 +33,11 @@ class OrderController extends Controller
      */
     public function create(): RedirectResponse | View
     {
-        $cartItems = Cart::with('shop', 'product.shopProduct')->where('created_by', Auth::id())->get();
+        if (Auth::user()->role->id == 3) {
+            $cartItems = Cart::with('sku.product')->where('created_by', Auth::id())->get();
+        } else {
+            $cartItems = Cart::with('shop', 'product.shopProduct')->where('created_by', Auth::id())->get();
+        }
         if (count($cartItems) > 0) {
             foreach ($cartItems as $cartItem) {
                 $cartItem->update([
@@ -91,20 +95,36 @@ class OrderController extends Controller
 
     public function getCartDetails(): View
     {
-        $cartItems = Cart::with('shop', 'product.shopProduct')->where('created_by', Auth::id())->get();
-        return view('product.partials.viewCart', compact('cartItems'));
+        if (Auth::user()->role->id == 3) {
+            $cartItems = Cart::with('sku.product')->where('created_by', Auth::id())->get();
+        } else {
+            $cartItems = Cart::with('shop', 'product.shopProduct')->where('created_by', Auth::id())->get();
+        }
+        return view('product.sections.view-cart', compact('cartItems'));
     }
 
-    public function addToCart(Request $request, string $id): JsonResponse
+    public function addToCart(Request $request, string $id): RedirectResponse | JsonResponse
     {
-        $shopId = $request->input('shopId');
-        Cart::create([
-            'qty' => $request->input('added_qty'),
-            'shop_id' => $shopId,
-            'product_id' => $id,
-            'created_by' => Auth::id()
-        ]);
-        return response()->json(['success' => true, 'message' => 'Product added to cart!']);
+        $roleId = Auth::user()->role->id;
+        if ($roleId === 3) {
+            Cart::create([
+                'qty' => 1,
+                'sku_id' => $id,
+                'created_by' => Auth::id()
+            ]);
+
+            $message = "Item added to cart successfully.";
+            return redirect()->back()->with('alert-success', $message);
+        } else {
+            $shopId = $request->input('shopId');
+            Cart::create([
+                'qty' => $request->input('added_qty'),
+                'shop_id' => $shopId,
+                'product_id' => $id,
+                'created_by' => Auth::id()
+            ]);
+            return response()->json(['success' => true, 'message' => 'Product added to cart!']);
+        }
     }
 
     public function destroy(Request $request, string $id): JsonResponse
@@ -133,6 +153,29 @@ class OrderController extends Controller
             return response()->json(['message' => 'record deleted successfully'], 200);
         } else {
             return response()->json(['message' => 'order not found'], 400);
+        }
+    }
+
+    public function destroyCartItem(Request $request, $id)
+    {
+        $cartItem = Cart::findOrFail($id)->delete();
+        // $cartItem->delete();
+        $message = 'Product removed from cart.';
+
+        return redirect()->back()->with('alert-success', $message);
+    }
+
+    public function cartCheckout(Request $request)
+    {
+        $cartData = $request->input('cart');
+        if (count($cartData) > 0) {
+            foreach ($cartData as $key => $value) {
+                Cart::find($key)->update($value);
+            }
+
+            return redirect()->route('orders.create')->with('alert-success', 'Items proceed to checkout successfully');
+        } else {
+            return redirect()->back()->with('alert-error', 'Something went wrong.');
         }
     }
 }

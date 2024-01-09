@@ -5,7 +5,7 @@ import jQuery from 'jquery';
 import 'jquery-validation';
 import persist from '@alpinejs/persist';
 import 'flowbite';
-import { setupAjax, objectifyForm, closeModel, openModel, addHTMLForPut } from './main';
+import { setupAjax, objectifyForm, closeModel, openModel, addHTMLForPut, checkCategoryValidation, handleSelectedCategory, requiredAndTrimmed } from './main';
 
 window.$ = jQuery;
 Alpine.plugin(persist)
@@ -14,6 +14,9 @@ window.setupAjax = setupAjax;
 window.objectifyForm = objectifyForm;
 window.openModel = openModel;
 window.closeModel = closeModel;
+window.checkCategoryValidation = checkCategoryValidation;
+window.handleSelectedCategory = handleSelectedCategory;
+window.requiredAndTrimmed = requiredAndTrimmed;
 window.addHTMLForPut = addHTMLForPut;
 Alpine.start();
 
@@ -60,14 +63,11 @@ jQuery.extend(jQuery.validator.messages, {
     pinCode: "Please enter a valid pincode."
 });
 
+
+
 $("#registrationForm").validate({
     rules: {
-        name: {
-            required: true,
-            normalizer: function (value) {
-                return $.trim(value);
-            }
-        },
+        name: requiredAndTrimmed(),
         email: {
             required: true,
             checkEmail: {

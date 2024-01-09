@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('product_details', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('product_id');
-            $table->string('branch');
+            $table->string('brand');
             $table->string('price');
             $table->string('weight');
             $table->tinyInteger('return_policy')->default(0)->comment("[0=>None, 1=>7Days, 2=>10ays, 3=>15Days]");
