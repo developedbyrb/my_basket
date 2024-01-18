@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.table')
 
-@section('content')
+@section('table')
     <div class="w-full flex flex-row-reverse">
         @if (\Helper::hasPermissionToView('create-categories'))
             <button class="custom-create-button open-upsert-modal" type="button" data-id="">
@@ -9,31 +9,31 @@
             </button>
         @endif
     </div>
-    <div class="table-wrapper">
-        <div class="max-w-full overflow-x-auto">
-            <table class="w-full table-auto">
-                <thead>
-                    <tr class="bg-gray-200 text-left dark:bg-meta-4">
-                        <th class="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-                            Sr No.
+
+    <hr class="w-full h-px my-4 bg-gray-200 border-0 dark:bg-gray-700">
+    <div class="max-w-full overflow-x-auto">
+        <table class="w-full table-auto">
+            <thead>
+                <tr class="bg-gray-200 text-left dark:bg-meta-4">
+                    <th class="py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                        Sr No.
+                    </th>
+                    <th class="py-4 px-4 font-medium text-black dark:text-white">
+                        Name
+                    </th>
+                    <th class="py-4 px-4 font-medium text-black dark:text-white">
+                        Create At
+                    </th>
+                    @if (\Helper::hasPermissionToView('edit-categories') || \Helper::hasPermissionToView('delete-categories'))
+                        <th class="py-4 px-4 font-medium text-black dark:text-white">
+                            Actions
                         </th>
-                        <th class="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                            Name
-                        </th>
-                        <th class="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                            Create At
-                        </th>
-                        @if (\Helper::hasPermissionToView('edit-categories') || \Helper::hasPermissionToView('delete-categories'))
-                            <th class="py-4 px-4 font-medium text-black dark:text-white">
-                                Actions
-                            </th>
-                        @endif
-                    </tr>
-                </thead>
-                <tbody id="categoryTableBody">
-                </tbody>
-            </table>
-        </div>
+                    @endif
+                </tr>
+            </thead>
+            <tbody id="categoryTableBody">
+            </tbody>
+        </table>
     </div>
 
     <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden custom-modal-wrapper">
@@ -191,7 +191,6 @@
         function submitForm(data) {
             setupAjax();
             let categoryId = $('#categoryForm').data('category-id');
-            console.log(categoryId);
             let postURL = '';
             if (categoryId) {
                 postURL = "{{ route('categories.update', ':id') }}";

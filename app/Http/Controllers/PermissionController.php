@@ -21,12 +21,14 @@ class PermissionController extends Controller
             $response = [
                 'success' => true,
                 'data' => [
-                    'html' => $returnHTML
+                    'html' => $returnHTML,
                 ],
-                'message' => 'Permissions list fetched successfully.'
+                'message' => 'Permissions list fetched successfully.',
             ];
+
             return response($response);
         }
+
         return view('permission.index', compact('permissions'));
     }
 
@@ -36,19 +38,19 @@ class PermissionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:permissions'
+            'name' => 'required|string|max:255|unique:permissions',
         ]);
 
         $permission = Permission::create(['name' => $request->input('name')]);
 
         RolePermission::create([
             'role_id' => 1,
-            'permission_id' => $permission->id
+            'permission_id' => $permission->id,
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Permission created Successfully.'
+            'message' => 'Permission created Successfully.',
         ]);
     }
 
@@ -59,8 +61,9 @@ class PermissionController extends Controller
     {
         if (Permission::findOrFail($id)) {
             $data = [
-                'permission' => Permission::findOrFail($id)
+                'permission' => Permission::findOrFail($id),
             ];
+
             return response(['success' => true, 'data' => $data, 'message' => 'Permission data found successfully.']);
         } else {
             return response(['success' => false, 'data' => [], 'message' => 'Permission not found.']);
@@ -75,11 +78,11 @@ class PermissionController extends Controller
         $permission = Permission::find($id);
         if ($permission) {
             $request->validate([
-                'name' => 'required|string|unique:permissions,name,' . $id
+                'name' => 'required|string|unique:permissions,name,'.$id,
             ]);
 
             $permission->update([
-                'name' => $request->input('name')
+                'name' => $request->input('name'),
             ]);
 
             return response(['message' => 'Permission Updated Successfully', 'success' => true]);
@@ -94,10 +97,11 @@ class PermissionController extends Controller
     public function destroy(string $id)
     {
         $permission = Permission::find($id);
-        if (!$permission) {
+        if (! $permission) {
             return response()->json(['message' => 'Permission not found.'], 404);
         }
         $permission->delete();
+
         return response()->json(['message' => 'Permission deleted successfully.']);
     }
 }

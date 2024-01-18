@@ -6,16 +6,19 @@
             <table class="w-full table-auto">
                 <thead>
                     <tr class="bg-gray-200 text-left dark:bg-meta-4">
-                        <th class="min-w-[80px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                        <th class=" py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
                             #
                         </th>
-                        <th class="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+                        <th class="py-4 px-4 font-medium text-black dark:text-white">
                             Product Name
                         </th>
-                        <th class="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+                        <th class="py-4 px-4 font-medium text-black dark:text-white">
+                            Sku Code
+                        </th>
+                        <th class="py-4 px-4 font-medium text-black dark:text-white">
                             Product From
                         </th>
-                        <th class="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                        <th class="py-4 px-4 font-medium text-black dark:text-white">
                             Quantity
                         </th>
                         <th class="py-4 px-4 font-medium text-black dark:text-white">
@@ -23,9 +26,6 @@
                         </th>
                         <th class="py-4 px-4 font-medium text-black dark:text-white">
                             Expected Delivery Date
-                        </th>
-                        <th class="py-4 px-4 font-medium text-black dark:text-white">
-                            Address
                         </th>
                         <th class="py-4 px-4 font-medium text-black dark:text-white">
                             Status
@@ -39,26 +39,28 @@
                     @forelse ($orders as $order)
                         <tr class="table-rows">
                             <td class="p-4">
-                                <img src="{{ asset('storage' . $order->product->image) }}"
-                                    class="w-16 md:w-32 max-w-full max-h-full" alt="{{ $order->product->name }}-image"
-                                    title="{{ $order->product->name }}-image" />
+                                <img src="{{ asset('storage' . $order->sku->image) }}"
+                                    class="w-16 md:w-32 max-w-full max-h-full" alt="{{ $order->sku->code }}-image"
+                                    title="{{ $order->sku->code }}-image" />
                             </td>
                             <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                                {{ $order->product->name }}
+                                {{ $order->sku->product->name }}
                             </td>
                             <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                                {{ $order->shop->name }}
+                                {{ $order->sku->code }}
+                            </td>
+                            <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                                {{ $order->sku->product->createdBy->name }}
                             </td>
                             <td class="px-6 py-4">
                                 {{ $order->qty }}
                             </td>
                             <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                                @money($order->qty * $order->product->shopProduct[0]->price)
+                                @money($order->qty * $order->sku->price)
                             </td>
                             <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
                                 {{ \Carbon\Carbon::parse($order->expected_delivery_date)->format('F j, Y') }}
                             </td>
-                            <td>-</td>
                             <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
                                 @switch($order->status)
                                     @case(1)

@@ -12,6 +12,7 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
+        Permission::getQuery()->delete();
         $permissions = config('globalConstant.APP_PERMISSIONS');
         foreach ($permissions as $permission) {
             Permission::create($permission);

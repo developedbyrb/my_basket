@@ -11,7 +11,7 @@ class Helper
     {
         $user = auth()->user();
 
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 
@@ -30,7 +30,27 @@ class Helper
 
     public static function uploadOne(UploadedFile $uploadedFile, $folder = null, $disk = 'public', $filename = null)
     {
-        $name = !is_null($filename) ? $filename : Str::random(25);
-        return $uploadedFile->storeAs($folder, $name . '.' . $uploadedFile->clientExtension(), $disk);
+        $name = ! is_null($filename) ? $filename : Str::random(25);
+
+        return $uploadedFile->storeAs($folder, $name.'.'.$uploadedFile->clientExtension(), $disk);
+    }
+
+    public static function secret($string, $action = 'e')
+    {
+        $secret_key = 'YourSecretKey';
+        $secret_iv = 'YourSecretIv';
+        $output = false;
+        $encrypt_method = 'AES-256-CBC';
+        $key = hash('sha256', $secret_key);
+        $iv = substr(hash('sha256', $secret_iv), 0, 16);
+
+        if ($action == 'e') {
+            $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
+        }
+        if ($action == 'd') {
+            $output = openssl_decrypt($string, $encrypt_method, $key, 0, $iv);
+        }
+
+        return $output;
     }
 }

@@ -22,6 +22,7 @@ class RegisteredUserController extends Controller
     public function create(): View
     {
         $roles = Role::where('id', '<>', 1)->get();
+
         return view('auth.register', compact('roles'));
     }
 
@@ -34,7 +35,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'role_id' => ['required'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);

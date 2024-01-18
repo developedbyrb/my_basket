@@ -14,9 +14,10 @@ class AttributeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): JsonResponse | View
+    public function index(Request $request): JsonResponse|View
     {
         $attributes = Attribute::with('attributeOptions', 'categories')->get();
+
         return view('attribute.index', compact('attributes'));
     }
 
@@ -26,6 +27,7 @@ class AttributeController extends Controller
     public function create()
     {
         $categories = Category::get();
+
         return view('attribute.sections.upsert-attribute', compact('categories'));
     }
 
@@ -37,14 +39,15 @@ class AttributeController extends Controller
         $request->validate([
             'name' => 'required|string|max:255|unique:attributes',
             'categories' => 'required',
-            'options.*.value' => 'required'
+            'options.*.value' => 'required',
         ]);
 
         Attribute::create([
-            'name' => $request->input('name')
+            'name' => $request->input('name'),
         ]);
 
-        $message = "Product attribute created successfully.";
+        $message = 'Product attribute created successfully.';
+
         return redirect()->route('attributes.index')->with('alert-success', $message);
     }
 
@@ -75,17 +78,19 @@ class AttributeController extends Controller
         $attribute = Attribute::find($id);
         if ($attribute) {
             $request->validate([
-                'name' => 'required|string|unique:attributes,name,' . $id
+                'name' => 'required|string|unique:attributes,name,'.$id,
             ]);
 
             $attribute->update([
-                'name' => $request->input('name')
+                'name' => $request->input('name'),
             ]);
 
-            $message = "Attribute updated successfully.";
+            $message = 'Attribute updated successfully.';
+
             return redirect()->route('attributes.index')->with('alert-success', $message);
         } else {
-            $message = "Attribute not found.";
+            $message = 'Attribute not found.';
+
             return redirect()->back()->with('alert-error', $message);
         }
     }
@@ -96,10 +101,11 @@ class AttributeController extends Controller
     public function destroy(string $id): JsonResponse
     {
         $attribute = Attribute::find($id);
-        if (!$attribute) {
+        if (! $attribute) {
             return response()->json(['message' => 'Attribute not found.'], 404);
         }
         $attribute->delete();
+
         return response()->json(['message' => 'Attribute deleted successfully.']);
     }
 }

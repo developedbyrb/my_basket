@@ -18,7 +18,7 @@ class Order extends Model
      */
     protected $fillable = [
         'expected_delivery_date', 'payment_type', 'qty', 'cancelled_reason',
-        'total_amount', 'shop_id', 'product_id', 'order_by', 'status'
+        'total_amount', 'shop_id', 'sku_id', 'warehouse_id', 'order_by', 'status',
     ];
 
     public function orderDetail(): HasOne
@@ -31,8 +31,8 @@ class Order extends Model
         return $this->belongsTo(Shop::class);
     }
 
-    public function product(): BelongsTo
+    public function sku(): BelongsTo
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Sku::class);
     }
 }

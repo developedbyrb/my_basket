@@ -1,7 +1,7 @@
-@forelse ($rowData as $data)
+@forelse ($rowData as $key => $data)
     <tr>
         <td class="custom-table-row pl-9">
-            <p class="text-black dark:text-white">{{ $data->id }}</p>
+            <p class="text-black dark:text-white">{{ ++$key }}</p>
         </td>
         <td class="custom-table-row">
             <p class="text-black dark:text-white">{{ $data->name }}</p>

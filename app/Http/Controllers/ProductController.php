@@ -8,23 +8,24 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ShopProduct;
-use App\Services\ProductService;
 use App\Traits\ImageUpload;
-use Illuminate\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\View\View;
 
 class ProductController extends Controller
 {
     use ImageUpload;
+
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): View | Response
+    public function index(Request $request): View|Response
     {
         $products = Product::latest()->get();
+
         return view('product.index', compact('products'));
     }
 
@@ -34,6 +35,7 @@ class ProductController extends Controller
     public function create(): View
     {
         $categories = Category::select('id', 'name')->get();
+
         return view('product.sections.upsert-product', compact('categories'));
     }
 
@@ -45,10 +47,11 @@ class ProductController extends Controller
         $product = Product::create($request->validated());
 
         // upload product image
-        $uploadedImage = '/' . $this->upload($request, 'image', 'products', $product);
+        $uploadedImage = '/' . $this->upload($request, $product, 'image', 'products');
         Product::find($product->id)->update(['image' => $uploadedImage]);
 
         $message = 'Product created successfully';
+
         return redirect()->route('products.index')->with('alert-success', $message);
     }
 
@@ -60,13 +63,14 @@ class ProductController extends Controller
         $productDetails = Product::with([
             'skus.attributeOptions' => function ($query) {
                 $query->with('attribute')->orderBy('id', 'desc');
-            }
+            },
         ])->with('details', 'categories')->find($id);
         $fields = [];
         $attributeColumns = $productDetails->skus[0]->attributeOptions;
-        foreach ($attributeColumns as $key => $value) {
+        foreach ($attributeColumns as $value) {
             array_push($fields, $value->attribute->name);
         }
+
         return view('product.sections.view-product', compact('productDetails', 'fields'));
     }
 
@@ -77,6 +81,7 @@ class ProductController extends Controller
     {
         $productDetails = Product::with('details', 'categories')->find($id);
         $categories = Category::select('id', 'name')->get();
+
         return view('product.sections.upsert-product', compact('productDetails', 'categories'));
     }
 
@@ -111,14 +116,15 @@ class ProductController extends Controller
                 ProductCategory::where('product_id', $product->id)->delete();
                 //add updated product categories
                 $category = $request->input('categories');
-                $categoryArray = explode(",", $category[0]);
+                $categoryArray = explode(',', $category[0]);
                 foreach ($categoryArray as $category) {
                     ProductCategory::create([
                         'product_id' => $product->id,
-                        'category_id' => $category
+                        'category_id' => $category,
                     ]);
                 }
             }
+
             return response(['message' => 'Product update Successfully', 'success' => true]);
         } else {
             return response()->json(['message' => 'Product not found.'], 404);
@@ -137,6 +143,7 @@ class ProductController extends Controller
         ProductCategory::where('product_id', $id)->delete();
         ShopProduct::where('product_id', $id)->delete();
         $product->delete();
+
         return response()->json(['message' => 'Product deleted successfully.']);
     }
 
@@ -156,10 +163,11 @@ class ProductController extends Controller
             $response = [
                 'success' => true,
                 'data' => [
-                    'html' => $returnHTML
+                    'html' => $returnHTML,
                 ],
-                'message' => 'Product attributes list fetched successfully.'
+                'message' => 'Product attributes list fetched successfully.',
             ];
+
             return response()->json($response);
         } else {
             return redirect()->back();

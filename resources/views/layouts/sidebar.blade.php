@@ -30,21 +30,20 @@
                         </a>
                     </li>
 
-                    @auth
-                        @if (\Helper::hasPermissionToView('get-users'))
-                            <li>
-                                <a class="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
-                                    href="{{ route('users.index') }}"
-                                    @click="selected = (selected === 'Users' ? '':'Users')"
-                                    :class="{
-                                        'bg-graydark dark:bg-meta-4': (selected === 'Users')
-                                    }">
-                                    <x-users-svg />
-                                    Users
-                                </a>
-                            </li>
-                        @endif
+                    @admin
+                        <li>
+                            <a class="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
+                                href="{{ route('users.index') }}" @click="selected = (selected === 'Users' ? '':'Users')"
+                                :class="{
+                                    'bg-graydark dark:bg-meta-4': (selected === 'Users')
+                                }">
+                                <x-users-svg />
+                                User List
+                            </a>
+                        </li>
+                    @endadmin
 
+                    @auth
                         @if (\Helper::hasPermissionToView('get-products') || \Helper::hasPermissionToView('get-attributes'))
                             <li>
                                 <a class="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
@@ -135,10 +134,7 @@
                             </li>
                         @endif
 
-                        @if (
-                            \Helper::hasPermissionToView('get-roles') ||
-                                \Helper::hasPermissionToView('get-permissions') ||
-                                \Helper::hasPermissionToView('get-access'))
+                        @admin
                             <li>
                                 <a class="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
                                     href="javascript:void(0)" @click.prevent="selected = (selected === 'RAP' ? '':'RAP')"
@@ -154,34 +150,28 @@
 
                                 <div class="overflow-hidden" :class="(selected === 'RAP') ? 'block' : 'hidden'">
                                     <ul class="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                                        @if (\Helper::hasPermissionToView('get-roles'))
-                                            <li>
-                                                <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('roles.index') ? 'text-white' : '' }}"
-                                                    href="{{ route('roles.index') }}">
-                                                    Roles
-                                                </a>
-                                            </li>
-                                        @endif
-                                        @if (\Helper::hasPermissionToView('get-permissions'))
-                                            <li>
-                                                <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('permissions.index') ? 'text-white' : '' }}"
-                                                    href="{{ route('permissions.index') }}">
-                                                    Permissions
-                                                </a>
-                                            </li>
-                                        @endif
-                                        @if (\Helper::hasPermissionToView('get-access'))
-                                            <li>
-                                                <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('access-management.index') ? 'text-white' : '' }}"
-                                                    href="{{ route('access-management.index') }}">
-                                                    AccessScope Matrix
-                                                </a>
-                                            </li>
-                                        @endif
+                                        <li>
+                                            <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('roles.index') ? 'text-white' : '' }}"
+                                                href="{{ route('roles.index') }}">
+                                                Roles
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('permissions.index') ? 'text-white' : '' }}"
+                                                href="{{ route('permissions.index') }}">
+                                                Permissions
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white {{ request()->routeIs('access-management.index') ? 'text-white' : '' }}"
+                                                href="{{ route('access-management.index') }}">
+                                                AccessScope Matrix
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
-                        @endif
+                        @endadmin
 
                         @if (\Helper::hasPermissionToView('get-warehouses', false))
                             <li>

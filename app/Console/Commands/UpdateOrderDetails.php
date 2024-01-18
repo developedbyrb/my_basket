@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Order;
+use App\Models\WarehouseProduct;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -27,8 +28,18 @@ class UpdateOrderDetails extends Command
      */
     public function handle()
     {
-        Order::where('status', '<>', '4')->whereDate('expected_delivery_date', Carbon::today())->update([
-            'status' => 3
-        ]);
+        $orders = Order::where('status', '<>', '4')->whereDate('expected_delivery_date', '<', Carbon::today())->get();
+        foreach ($orders as $order) {
+            $order->update([
+                'status' => 3,
+            ]);
+
+            // update warehouse product stock
+            WarehouseProduct::create([
+                'warehouse_id' => $order->warehouse_id,
+                'sku_id' => $order->sku_id,
+                'available_stock' => $order->qty,
+            ]);
+        }
     }
 }

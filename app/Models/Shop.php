@@ -18,9 +18,9 @@ class Shop extends Model
      */
     protected $fillable = ['name', 'image', 'created_by'];
 
-    public function products(): BelongsToMany
+    public function skus(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, 'shop_products');
+        return $this->belongsToMany(Sku::class, 'shop_products');
     }
 
     /**

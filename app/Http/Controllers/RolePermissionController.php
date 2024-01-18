@@ -17,6 +17,7 @@ class RolePermissionController extends Controller
     {
         $roles = Role::where('id', '<>', 1)->with('permissions')->get();
         $permissions = Permission::get();
+
         return view('matrix.index', compact('roles', 'permissions'));
     }
 
@@ -31,12 +32,13 @@ class RolePermissionController extends Controller
             foreach ($permissions as $permission) {
                 RolePermission::create([
                     'role_id' => $role,
-                    'permission_id' => $permission
+                    'permission_id' => $permission,
                 ]);
             }
         }
 
         $message = 'Role wise permissions updated successfully';
+
         return redirect()->route('access-management.index')->with('alert-success', $message);
     }
 }

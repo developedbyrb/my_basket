@@ -12,7 +12,7 @@ class RoleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): JsonResponse | View
+    public function index(Request $request): JsonResponse|View
     {
         $roles = Role::orderBy('id', 'asc')->get();
         if ($request->ajax()) {
@@ -22,12 +22,14 @@ class RoleController extends Controller
             $response = [
                 'success' => true,
                 'data' => [
-                    'html' => $returnHTML
+                    'html' => $returnHTML,
                 ],
-                'message' => 'Roles list fetched successfully.'
+                'message' => 'Roles list fetched successfully.',
             ];
+
             return response()->json($response);
         }
+
         return view('role.index', compact('roles'));
     }
 
@@ -37,11 +39,11 @@ class RoleController extends Controller
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:roles'
+            'name' => 'required|string|max:255|unique:roles',
         ]);
 
         Role::create([
-            'name' => $request->input('name')
+            'name' => $request->input('name'),
         ]);
 
         return response()->json(['message' => 'Role created Successfully', 'success' => true]);
@@ -62,8 +64,9 @@ class RoleController extends Controller
     {
         if (Role::findOrFail($id)) {
             $data = [
-                'role' => Role::findOrFail($id)
+                'role' => Role::findOrFail($id),
             ];
+
             return response(['success' => true, 'data' => $data, 'message' => 'Role data found successfully.']);
         } else {
             return response(['success' => false, 'data' => [], 'message' => 'Role not found.']);
@@ -78,11 +81,11 @@ class RoleController extends Controller
         $role = Role::find($id);
         if ($role) {
             $request->validate([
-                'name' => 'required|string|unique:roles,name,' . $id
+                'name' => 'required|string|unique:roles,name,'.$id,
             ]);
 
             $role->update([
-                'name' => $request->input('name')
+                'name' => $request->input('name'),
             ]);
 
             return response(['message' => 'Role Updated Successfully', 'success' => true]);
@@ -97,10 +100,11 @@ class RoleController extends Controller
     public function destroy(string $id): JsonResponse
     {
         $role = Role::find($id);
-        if (!$role) {
+        if (! $role) {
             return response()->json(['message' => 'Role not found.'], 404);
         }
         $role->delete();
+
         return response()->json(['message' => 'Role deleted successfully.']);
     }
 }

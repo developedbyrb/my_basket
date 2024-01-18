@@ -25,7 +25,7 @@ class AttributeObserver
         foreach ($options as $option) {
             AttributeOption::create([
                 'attribute_id' => $attribute->id,
-                'value' => $option['value']
+                'value' => $option['value'],
             ]);
         }
 

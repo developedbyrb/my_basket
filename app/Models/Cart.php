@@ -16,7 +16,7 @@ class Cart extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'expected_delivery_date', 'qty', 'shop_id', 'sku_id', 'created_by'
+        'expected_delivery_date', 'qty', 'shop_id', 'sku_id', 'created_by',
     ];
 
     public function shop(): BelongsTo

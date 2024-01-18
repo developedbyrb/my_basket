@@ -19,7 +19,7 @@ class Product extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'image', 'slug', 'description', 'created_by'
+        'name', 'image', 'slug', 'description', 'created_by',
     ];
 
     public function details(): HasOne

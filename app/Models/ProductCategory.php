@@ -15,5 +15,6 @@ class ProductCategory extends Model
      * @var array<int, string>
      */
     protected $fillable = ['product_id', 'category_id'];
+
     public $timestamps = false;
 }

@@ -45,7 +45,7 @@
                             </td>
                             <td class="custom-table-row">
                                 <p class="plain-text">
-                                    {{ $warehouse->categories->pluck('name')->implode(', ') }}
+                                    {{ $warehouse->defaultAddress() }}
                                 </p>
                             </td>
                             <td class="custom-table-row">

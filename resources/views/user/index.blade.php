@@ -1,20 +1,21 @@
-@extends('layouts.app')
+@extends('layouts.table')
 
-@section('content')
-    <div class="w-full flex flex-row-reverse">
-        @if (\Helper::hasPermissionToView('create-users'))
-            <button class="custom-create-button open-user-modal" type="button" data-id="">
-                @include('svg.plus')
-                {{ __('Create User') }}
-            </button>
-        @endif
-    </div>
-    <div class="table-wrapper">
+@section('table')
+    <div class="user-table">
+        <div class="w-full flex flex-row-reverse">
+            @if (\Helper::hasPermissionToView('create-users'))
+                <button class="custom-create-button open-user-modal" type="button" data-id="">
+                    @include('svg.plus')
+                    {{ __('Create User') }}
+                </button>
+            @endif
+        </div>
+        <hr class="w-full h-px my-4 bg-gray-200 border-0 dark:bg-gray-700">
         <div class="max-w-full overflow-x-auto">
             <table class="w-full table-auto">
                 <thead>
                     <tr class="bg-gray-200 text-left dark:bg-meta-4">
-                        <th class="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                        <th class="py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
                             Sr No.
                         </th>
                         <th class="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">

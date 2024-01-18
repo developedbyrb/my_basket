@@ -3,20 +3,12 @@
 return [
     'APP_NAME' => 'MyBasket',
     'APP_ROLES' => [
-        ['name' =>  'Admin'],
+        ['name' => 'Admin'],
         ['name' => 'Shopper'],
         ['name' => 'Shopkeeper'],
-        ['name' => 'Supplier']
+        ['name' => 'Supplier'],
     ],
     'APP_PERMISSIONS' => [
-        ['name' =>  'get-roles'],
-        ['name' => 'create-roles'],
-        ['name' => 'edit-roles'],
-        ['name' => 'delete-roles'],
-        ['name' => 'get-permissions'],
-        ['name' => 'create-permissions'],
-        ['name' => 'edit-permissions'],
-        ['name' => 'delete-permissions'],
         ['name' => 'get-categories'],
         ['name' => 'create-categories'],
         ['name' => 'edit-categories'],
@@ -33,8 +25,6 @@ return [
         ['name' => 'create-shops'],
         ['name' => 'edit-shops'],
         ['name' => 'delete-shops'],
-        ['name' => 'get-access'],
-        ['name' => 'save-access'],
         ['name' => 'get-attributes'],
         ['name' => 'create-attributes'],
         ['name' => 'edit-attributes'],
@@ -42,19 +32,26 @@ return [
         ['name' => 'get-warehouses'],
         ['name' => 'create-warehouses'],
         ['name' => 'edit-warehouses'],
-        ['name' => 'delete-warehouses']
+        ['name' => 'delete-warehouses'],
+        ['name' => 'get-cart-items'],
+        ['name' => 'create-cart-items'],
+        ['name' => 'edit-cart-items'],
+        ['name' => 'delete-cart-items'],
+        ['name' => 'get-orders'],
+        ['name' => 'create-orders'],
+        ['name' => 'delete-orders'],
     ],
     'PAYMENT_METHODS' => [
         1 => 'COD',
         2 => 'Card',
         3 => 'UPI',
-        4 => 'Net Banking'
+        4 => 'Net Banking',
     ],
     'ORDER_STATUSES' => [
         1 => 'Placed',
         2 => 'In Transits',
         3 => 'Delivered',
-        4 => 'Cancelled'
+        4 => 'Cancelled',
     ],
     'RETURN_POLICY' => [
         1 => '7 Days',
@@ -63,9 +60,273 @@ return [
     ],
     'PRODUCT_STATE' => [
         1 => 'New',
-        2 => 'Refurbished'
+        2 => 'Refurbished',
     ],
-    'GEO_GRAPHIC_STATES' => [
-        'ap' => 'Andhra Pradesh',
-    ]
+    'GEO_CONFIG_COUNTRIES' => [
+        [
+            'id' => '101',
+            'name' => 'India',
+        ],
+        [
+            'id' => '109',
+            'name' => 'Japan',
+        ],
+    ],
+    'GEO_CONFIG_STATES' => [
+        [
+            'id' => '1',
+            'name' => 'Andaman and Nicobar Islands',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '2',
+            'name' => 'Andhra Pradesh',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '3',
+            'name' => 'Arunachal Pradesh',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '4',
+            'name' => 'Assam',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '5',
+            'name' => 'Bihar',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '6',
+            'name' => 'Chandigarh',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '7',
+            'name' => 'Chhattisgarh',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '8',
+            'name' => 'Dadra and Nagar Haveli',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '9',
+            'name' => 'Daman and Diu',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '10',
+            'name' => 'Delhi',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '11',
+            'name' => 'Goa',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '12',
+            'name' => 'Gujarat',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '13',
+            'name' => 'Haryana',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '14',
+            'name' => 'Himachal Pradesh',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '15',
+            'name' => 'Jammu and Kashmir',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '16',
+            'name' => 'Jharkhand',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '17',
+            'name' => 'Karnataka',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '19',
+            'name' => 'Kerala',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '20',
+            'name' => 'Lakshadweep',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '21',
+            'name' => 'Madhya Pradesh',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '22',
+            'name' => 'Maharashtra',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '23',
+            'name' => 'Manipur',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '24',
+            'name' => 'Meghalaya',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '25',
+            'name' => 'Mizoram',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '26',
+            'name' => 'Nagaland',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '29',
+            'name' => 'Odisha',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '31',
+            'name' => 'Pondicherry',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '32',
+            'name' => 'Punjab',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '33',
+            'name' => 'Rajasthan',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '34',
+            'name' => 'Sikkim',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '35',
+            'name' => 'Tamil Nadu',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '36',
+            'name' => 'Telangana',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '37',
+            'name' => 'Tripura',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '38',
+            'name' => 'Uttar Pradesh',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '39',
+            'name' => 'Uttarakhand',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '41',
+            'name' => 'West Bengal',
+            'country_id' => '101',
+        ],
+        [
+            'id' => '1918',
+            'name' => 'Aichi',
+            'country_id' => '109',
+        ],
+        [
+            'id' => '1919',
+            'name' => 'Akita',
+            'country_id' => '109',
+        ],
+        [
+            'id' => '1920',
+            'name' => 'Aomori',
+            'country_id' => '109',
+        ],
+        [
+            'id' => '1921',
+            'name' => 'Chiba',
+            'country_id' => '109',
+        ],
+        [
+            'id' => '1922',
+            'name' => 'Ehime',
+            'country_id' => '109',
+        ],
+        [
+            'id' => '1923',
+            'name' => 'Fukui',
+            'country_id' => '109',
+        ],
+        [
+            'id' => '1924',
+            'name' => 'Fukuoka',
+            'country_id' => '109',
+        ],
+        [
+            'id' => '1925',
+            'name' => 'Fukushima',
+            'country_id' => '109',
+        ],
+        [
+            'id' => '1926',
+            'name' => 'Gifu',
+            'country_id' => '109',
+        ],
+        [
+            'id' => '1927',
+            'name' => 'Gumma',
+            'country_id' => '109',
+        ],
+        [
+            'id' => '1928',
+            'name' => 'Hiroshima',
+            'country_id' => '109',
+        ],
+        [
+            'id' => '1929',
+            'name' => 'Hokkaido',
+            'country_id' => '109',
+        ],
+        [
+            'id' => '1930',
+            'name' => 'Hyogo',
+            'country_id' => '109',
+        ],
+        [
+            'id' => '1931',
+            'name' => 'Ibaraki',
+            'country_id' => '109',
+        ],
+        [
+            'id' => '1932',
+            'name' => 'Ishikawa',
+            'country_id' => '109',
+        ],
+    ],
 ];

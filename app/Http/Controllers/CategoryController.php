@@ -13,7 +13,7 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): Response | View
+    public function index(Request $request): Response|View
     {
         $categories = Category::latest()->get();
         if ($request->ajax()) {
@@ -23,12 +23,14 @@ class CategoryController extends Controller
             $response = [
                 'success' => true,
                 'data' => [
-                    'html' => $returnHTML
+                    'html' => $returnHTML,
                 ],
-                'message' => 'Category list fetched successfully.'
+                'message' => 'Category list fetched successfully.',
             ];
+
             return response($response);
         }
+
         return view('category.index', compact('categories'));
     }
 
@@ -38,11 +40,11 @@ class CategoryController extends Controller
     public function store(Request $request): Response
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:categories'
+            'name' => 'required|string|max:255|unique:categories',
         ]);
 
         Category::create([
-            'name' => $request->input('name')
+            'name' => $request->input('name'),
         ]);
 
         return response(['message' => 'Category created Successfully', 'success' => true]);
@@ -55,8 +57,9 @@ class CategoryController extends Controller
     {
         if (Category::findOrFail($id)) {
             $data = [
-                'category' => Category::findOrFail($id)
+                'category' => Category::findOrFail($id),
             ];
+
             return response(['success' => true, 'data' => $data, 'message' => 'Category data found successfully.']);
         } else {
             return response(['success' => false, 'data' => [], 'message' => 'Category not found.']);
@@ -71,11 +74,11 @@ class CategoryController extends Controller
         $category = Category::find($id);
         if ($category) {
             $request->validate([
-                'name' => 'required|string|unique:categories,name,' . $id
+                'name' => 'required|string|unique:categories,name,'.$id,
             ]);
 
             $category->update([
-                'name' => $request->input('name')
+                'name' => $request->input('name'),
             ]);
 
             return response(['message' => 'Category Updated Successfully', 'success' => true]);
@@ -90,10 +93,11 @@ class CategoryController extends Controller
     public function destroy(string $id): JsonResponse
     {
         $category = Category::find($id);
-        if (!$category) {
+        if (! $category) {
             return response()->json(['message' => 'Category not found.'], 404);
         }
         $category->delete();
+
         return response()->json(['message' => 'Category deleted successfully.']);
     }
 }

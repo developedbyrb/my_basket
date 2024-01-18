@@ -169,6 +169,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\BladeServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -184,7 +185,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
-        'Helper' => Helper::class
+        'Helper' => Helper::class,
     ])->toArray(),
 
 ];

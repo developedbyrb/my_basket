@@ -1,152 +1,157 @@
-@extends('layouts.app')
+@extends('layouts.card')
 
-@section('content')
-    <div class="w-full flex flex-row-reverse">
-        <a href="{{ route('dashboard') }}" class="custom-create-button" type="button">
+@section('card')
+    <div class="w-full flex">
+        <a href="{{ route('shops.index') }}" class="custom-create-button" type="button">
             {{ __('Back') }}
         </a>
     </div>
-    <div class="card-wrapper md:grid-cols p-4 md:p-5 flex justify-center items-center">
-        <div class="view-table-wrapper">
+    <div class="view-table-wrapper">
+        <a href="javascript:void(0)">
+            @if ($shop->image)
+                <img src="{{ asset('storage' . $shop->image) }}" alt="{{ $shop->name . '-image' }}"
+                    title="{{ $shop->name . '-image' }}" class="rounded-t-lg" title="{{ $shop->name . '-image' }}">
+            @else
+                <x-upload-svg />
+            @endif
+        </a>
+        <div class="px-5 pb-5">
             <a href="javascript:void(0)">
-                @if ($shop->image)
-                    <img src="{{ asset('storage' . $shop->image) }}" alt="{{ $shop->name . '-image' }}"
-                        title="{{ $shop->name . '-image' }}" class="rounded-t-lg" title="{{ $shop->name . '-image' }}">
-                @else
-                    <x-upload-svg />
-                @endif
+                <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
+                    {{ $shop->name }}</h5>
             </a>
-            <div class="px-5 pb-5">
-                <a href="javascript:void(0)">
-                    <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
-                        {{ $shop->name }}</h5>
-                </a>
 
-                @if ($shop->address)
-                    <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-2">
-                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                            <caption class="table-caption">
-                                Our Addresses
-                                <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-                                    Browse a list of addresses to visit our shops
-                                </p>
-                            </caption>
-                            <thead class="table-header">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3">
-                                        House Number
+            @if ($shop->address)
+                <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-2">
+                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <caption class="table-caption">
+                            Our Addresses
+                            <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+                                Browse a list of addresses to visit our shops
+                            </p>
+                        </caption>
+                        <thead class="table-header">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">
+                                    House Number
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Area
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    City
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    State
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Country
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($shop->address as $key => $address)
+                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                    <th scope="row" class="table-custom-title">
+                                        {{ $address->house_no }}
                                     </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        Area
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        City
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        State
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        Country
-                                    </th>
+                                    <td class="px-6 py-4">
+                                        {{ $address->area }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        {{ $address->city }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        {{ $address->state }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        {{ $address->country }}
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($shop->address as $key => $address)
-                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                        <th scope="row" class="table-custom-title">
-                                            {{ $address->house_no }}
-                                        </th>
-                                        <td class="px-6 py-4">
-                                            {{ $address->area }}
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            {{ $address->city }}
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            {{ $address->state }}
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            {{ $address->country }}
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                        <td class="px-6 py-4">
-                                            No Addresses found
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
+                            @empty
+                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                    <td class="px-6 py-4">
+                                        No Addresses found
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            @endif
 
-                @if ($shop->products)
-                    <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-2">
-                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                            <caption class="table-caption">
-                                Our Products
-                                <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-                                    Browse a list of products that we are selling with their price and images.
-                                </p>
-                            </caption>
-                            <thead class="table-header">
-                                <tr>
-                                    <th scope="col" class="px-10 py-3">
-                                        <span class="sr-only">Image</span>
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        Product
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        Available Qty
-                                    </th>
-                                    <th scope="col" class="px-10 py-3 w-40">
-                                        Price
-                                    </th>
+            @if ($shop->skus)
+                <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4">
+                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <caption class="table-caption">
+                            Our Products
+                            <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+                                Browse a list of products that we are selling with their price and images.
+                            </p>
+                        </caption>
+                        <thead class="table-header">
+                            <tr>
+                                <th scope="col" class="px-10 py-3">
+                                    <span class="sr-only">Image</span>
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Product
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Available Qty
+                                </th>
+                                <th scope="col" class="px-10 py-3 w-40">
+                                    Price
+                                </th>
+                                @if (\Helper::hasPermissionToView('create-cart-items', false))
                                     <th scope="col" class="px-6 py-3">
                                         Action
                                     </th>
+                                @endif
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($shop->skus as $skuKey => $sku)
+                                <tr class="table-rows">
+                                    <td class="p-4">
+                                        @if ($sku->image)
+                                            <img class="table-images" src="{{ asset('storage' . $sku->image) }}"
+                                                alt="{{ $sku->code . '-image' }}" title="{{ $sku->code . '-image' }}">
+                                        @else
+                                            <x-upload-svg />
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                                        {{ $sku->product->name }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        {{ $sku->shopProduct->stock_qty }}
+                                    </td>
+                                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                                        @money($sku->shopProduct->selling_price)
+                                    </td>
+                                    @if (\Helper::hasPermissionToView('create-cart-items', false))
+                                        <td colspan="5" class="px-6 py-4">
+                                            <form action="{{ route('cartItems.store') }}" method="post">
+                                                @csrf
+                                                <input type="hidden" name="shopId" value="{{ $shop->id }}">
+                                                <input type="hidden" name="skuId" value="{{ $sku->id }}">
+                                                <button type="submit"
+                                                    class="inline-flex items-center text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-900">
+                                                    @include('svg.add-cart-svg')
+                                                    <span class="ml-3">Add To cart</span>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    @endif
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($shop->product as $productKey => $product)
-                                    <tr class="table-rows">
-                                        <td class="p-4">
-                                            @if ($product->productDetails->image)
-                                                <img class="table-images"
-                                                    src="{{ asset('storage' . $product->productDetails->image) }}"
-                                                    alt="{{ $product->productDetails->image . '-image' }}"
-                                                    title="{{ $product->productDetails->image . '-image' }}">
-                                            @else
-                                                <x-upload-svg />
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                                            {{ $product->productDetails->name }}
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            {{ $product->stock_qty }}
-                                        </td>
-                                        <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                                            @money($product->price)
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <a class="custom-create-button cursor-pointer add-to-cart" type="button"
-                                                title="Add to cart" data-id="{{ $product->product_id }}"
-                                                data-shop-id="{{ $product->shop_id }}">
-                                                @include('svg.add-cart-svg')
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <div>No Products Available</div>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
-            </div>
+                            @empty
+                                <div>No Products Available</div>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            @endif
         </div>
     </div>
 
@@ -260,36 +265,6 @@
                 error: function(data) {
                     console.error('Custom Error', data);
                 }
-            });
-        }
-
-        function submitForm(data) {
-            setupAjax();
-            const productId = $('#cartForm').data('product-id');
-            const shopId = $('#cartForm').data('shop-id');
-            let postURL = "{{ route('products.addToCart', ':id') }}";
-            postURL = postURL.replace(':id', productId);
-
-            let formData = new FormData();
-            for (var key in data) {
-                formData.append(key, data[key]);
-            }
-            formData.append('shopId', shopId);
-            $.ajax({
-                url: postURL,
-                type: 'POST',
-                data: formData,
-                async: false,
-                processData: false,
-                contentType: false,
-                dataType: 'json',
-                success: function(data) {
-                    closeModel('#crud-modal');
-                    $('#cartForm').removeData("product-id");
-                    $('#cartForm').removeData("shop-id");
-                    location.reload();
-                },
-                error: function(data) {}
             });
         }
     </script>

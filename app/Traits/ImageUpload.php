@@ -6,17 +6,18 @@ use Illuminate\Http\Request;
 
 trait ImageUpload
 {
-
     /**
-     * @param Request $request
      * @return $this|false|string
      */
-    public function upload(Request $request, $fieldname = 'image', $directory = 'images', $data)
+    public function upload(Request $request, $data, $fieldname = 'image', $directory = 'images')
     {
         if ($request->hasFile($fieldname)) {
-            $name = preg_replace('/\s+/', '', $request->name) . '_' . time();
-            $folder = '/' . $directory . '/' . $data->id;
-            return  $request->file($fieldname)->storeAs($folder, $name . '.' . $request->file($fieldname)->clientExtension(), 'public');
+            $title = str_replace(['\'', '"', ',', ';', '<', '>'], ' ', $request->name);
+            $name = preg_replace('/\s+/', '', $title).'_'.time();
+            $folder = '/'.$directory.'/'.$data->id;
+
+            return $request->file($fieldname)
+                ->storeAs($folder, $name.'.'.$request->file($fieldname)->clientExtension(), 'public');
         }
 
         return null;

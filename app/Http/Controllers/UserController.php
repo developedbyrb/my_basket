@@ -21,12 +21,14 @@ class UserController extends Controller
             $response = [
                 'success' => true,
                 'data' => [
-                    'html' => $returnHTML
+                    'html' => $returnHTML,
                 ],
-                'message' => 'Users list fetched successfully.'
+                'message' => 'Users list fetched successfully.',
             ];
+
             return response($response);
         }
+
         return view('user.index', compact('users'));
     }
 
@@ -40,8 +42,9 @@ class UserController extends Controller
         $responseData = [
             'success' => true,
             'data' => ['roles' => $roles],
-            'message' => ''
+            'message' => '',
         ];
+
         return response($responseData);
     }
 
@@ -61,17 +64,17 @@ class UserController extends Controller
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'role_id' => $request->input('role_id'),
-            'password' => ''
+            'password' => '',
         ]);
 
         event(new Registered($user));
 
         if ($request->file('profile_pic')) {
-            $name = preg_replace('/\s+/', '', $user->name) . '_' . time();
-            $folder = '/users/' . $user->id . '/';
+            $name = preg_replace('/\s+/', '', $user->name).'_'.time();
+            $folder = '/users/'.$user->id.'/';
             Helper::uploadOne($request->file('profile_pic'), $folder, 'public', $name);
 
-            $filePath = $folder . $name . '.' . $request->file('profile_pic')->clientExtension();
+            $filePath = $folder.$name.'.'.$request->file('profile_pic')->clientExtension();
             User::find($user->id)->update(['profile_pic' => $filePath]);
         }
 
@@ -94,8 +97,9 @@ class UserController extends Controller
         if (User::findOrFail($id)) {
             $data = [
                 'user' => User::findOrFail($id),
-                'roles' => Role::select('id', 'name')->get()
+                'roles' => Role::select('id', 'name')->get(),
             ];
+
             return response(['success' => true, 'data' => $data, 'message' => 'User data found successfully.']);
         } else {
             return response(['success' => false, 'data' => [], 'message' => 'User not found.']);
@@ -111,7 +115,7 @@ class UserController extends Controller
         if ($user) {
             $request->validate([
                 'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users,email,' . $id,
+                'email' => 'required|email|unique:users,email,'.$id,
                 'role_id' => 'required',
                 'profile_pic' => 'mimes:png,jpg,jpeg|max:2048',
             ]);
@@ -119,16 +123,15 @@ class UserController extends Controller
             $user->update([
                 'name' => $request->input('name'),
                 'email' => $request->input('email'),
-                'role_id' => $request->input('role_id')
+                'role_id' => $request->input('role_id'),
             ]);
 
-
             if ($request->file('profile_pic')) {
-                $name = preg_replace('/\s+/', '', $user->name) . '_' . time();
-                $folder = '/users/' . $user->id . '/';
+                $name = preg_replace('/\s+/', '', $user->name).'_'.time();
+                $folder = '/users/'.$user->id.'/';
                 Helper::uploadOne($request->file('profile_pic'), $folder, 'public', $name);
 
-                $filePath = $folder . $name . '.' . $request->file('profile_pic')->clientExtension();
+                $filePath = $folder.$name.'.'.$request->file('profile_pic')->clientExtension();
                 User::find($user->id)->update(['profile_pic' => $filePath]);
             }
 
@@ -144,10 +147,11 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         $user = User::find($id);
-        if (!$user) {
+        if (! $user) {
             return response()->json(['message' => 'User not found.'], 404);
         }
         $user->delete();
+
         return response()->json(['message' => 'User deleted successfully.']);
     }
 }

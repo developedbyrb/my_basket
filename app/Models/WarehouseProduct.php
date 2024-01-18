@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProductDetail extends Model
+class WarehouseProduct extends Model
 {
     use HasFactory;
 
@@ -14,8 +14,5 @@ class ProductDetail extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'product_id', 'brand', 'price', 'weight', 'return_policy', 'length',
-        'width', 'breadth', 'ships_from', 'ship_by', 'import_fees', 'state',
-    ];
+    protected $fillable = ['warehouse_id', 'sku_id', 'available_stock'];
 }

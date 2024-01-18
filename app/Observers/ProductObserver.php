@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 class ProductObserver
 {
     protected $request;
+
     use GenerateSkus;
     use ImageUpload;
 
@@ -42,7 +43,7 @@ class ProductObserver
             'ships_from' => $requestData->input('ships_from'),
             'ship_by' => $requestData->input('sold_by'),
             'import_fees' => $requestData->input('import_fees'),
-            'state' => $requestData->input('product_state')
+            'state' => $requestData->input('product_state'),
         ]);
 
         //store product tags
@@ -50,7 +51,7 @@ class ProductObserver
         foreach ($tagArray as $tag) {
             ProductTag::create([
                 'product_id' => $product->id,
-                'value' => $tag
+                'value' => $tag,
             ]);
         }
 
@@ -63,21 +64,21 @@ class ProductObserver
                 'code' => $this->generate($product->name, $product->id, $requestData->input('brand'), $skuData),
                 'price' => $skuData['price'],
                 'avail_stock' => $skuData['avail_stock'],
-                'is_default' => isset($skuData['is_default']) ? 1 : 0
+                'is_default' => isset($skuData['is_default']) ? 1 : 0,
             ]);
 
             // upload product image
-            $uploadedImage = '/' . $this->upload($this->request, 'image', 'skus', $product);
+            $uploadedImage = '/'.$this->upload($this->request, $product, 'image', 'skus');
             Sku::find($newSku->id)->update(['image' => $uploadedImage]);
 
-            unset($skuData["price"]);
-            unset($skuData["is_default"]);
-            unset($skuData["avail_stock"]);
+            unset($skuData['price']);
+            unset($skuData['is_default']);
+            unset($skuData['avail_stock']);
             foreach ($skuData as $value) {
                 // Create Attribute Options
                 AttributeOptionSku::create([
                     'sku_id' => $newSku->id,
-                    'attribute_option_id' => $value
+                    'attribute_option_id' => $value,
                 ]);
             }
         }

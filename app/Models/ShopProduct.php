@@ -15,12 +15,7 @@ class ShopProduct extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['shop_id', 'product_id', 'stock_qty', 'price'];
-
-    public function productDetails(): BelongsTo
-    {
-        return $this->belongsTo(Product::class, 'product_id', 'id');
-    }
+    protected $fillable = ['shop_id', 'sku_id', 'stock_qty', 'price'];
 
     public function shopDetails(): BelongsTo
     {

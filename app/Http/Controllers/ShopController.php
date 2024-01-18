@@ -20,6 +20,7 @@ class ShopController extends Controller
     public function index(Request $request)
     {
         $shops = Shop::with('address')->latest()->get();
+
         return view('shop.index', compact('shops'));
     }
 
@@ -28,7 +29,10 @@ class ShopController extends Controller
      */
     public function create()
     {
-        $products = Product::get();
+        $products = Product::has('skus.warehouses')->whereHas('skus.warehouses', function ($query) {
+            $query->where('owner', Auth::id());
+        })->get();
+
         return view('shop.sections.upsert-shop', compact('products'));
     }
 
@@ -37,18 +41,17 @@ class ShopController extends Controller
      */
     public function store(StoreShopRequest $request)
     {
-        dd($request->validated());
         $shop = Shop::create([
             'name' => $request->input('name'),
-            'created_by' => Auth::id()
+            'created_by' => Auth::id(),
         ]);
 
         if ($request->file('image')) {
-            $name = preg_replace('/\s+/', '', $shop->name) . '_' . time();
-            $folder = '/shops/' . $shop->id . '/';
+            $name = preg_replace('/\s+/', '', $shop->name).'_'.time();
+            $folder = '/shops/'.$shop->id.'/';
             Helper::uploadOne($request->file('image'), $folder, 'public', $name);
 
-            $filePath = $folder . $name . '.' . $request->file('image')->clientExtension();
+            $filePath = $folder.$name.'.'.$request->file('image')->clientExtension();
             Shop::find($shop->id)->update(['image' => $filePath]);
         }
 
@@ -74,12 +77,13 @@ class ShopController extends Controller
                     'shop_id' => $shop->id,
                     'product_id' => $product['product_id'],
                     'stock_qty' => $product['qty'],
-                    'price' => $product['price']
+                    'price' => $product['price'],
                 ]);
             }
         }
 
         $message = 'New shop created successfully!';
+
         return redirect()->route('shops.index')->with('alert-success', $message);
     }
 
@@ -88,9 +92,9 @@ class ShopController extends Controller
      */
     public function show(string $id)
     {
-        $shop = Shop::with('address', 'product.productDetails')->find($id);
+        $shop = Shop::with('address', 'skus')->find($id);
         if ($shop) {
-            return view('shop.partials.viewDetails', compact('shop'));
+            return view('shop.sections.view-shop', compact('shop'));
         } else {
             return redirect()->back();
         }
@@ -104,7 +108,8 @@ class ShopController extends Controller
         $shop = Shop::with('product')->find($id);
         if ($shop) {
             $products = Product::get();
-            return view('shop.partials.upsert', compact('shop', 'products'));
+
+            return view('shop.sections.upsert-shop', compact('shop', 'products'));
         } else {
             return redirect()->back();
         }
@@ -118,7 +123,7 @@ class ShopController extends Controller
         $shop = Shop::find($id);
         if ($shop) {
             $validator = Validator::make($request->all(), [
-                'name' => 'required|string|max:255|unique:shops,name,' . $id,
+                'name' => 'required|string|max:255|unique:shops,name,'.$id,
                 'image' => 'mimes:png,jpg,jpeg|max:2048',
                 'addresses.*.house_no' => 'required',
                 'addresses.*.area' => 'required',
@@ -128,7 +133,7 @@ class ShopController extends Controller
                 'addresses.*.country' => 'required',
                 'products.*.product_id' => 'required',
                 'products.*.qty' => 'required',
-                'products.*.price' => 'required'
+                'products.*.price' => 'required',
             ]);
 
             if ($validator->fails()) {
@@ -138,15 +143,15 @@ class ShopController extends Controller
             }
 
             $shop->update([
-                'name' => $request->input('name')
+                'name' => $request->input('name'),
             ]);
 
             if ($request->file('image')) {
-                $name = preg_replace('/\s+/', '', $shop->name) . '_' . time();
-                $folder = '/shops/' . $shop->id . '/';
+                $name = preg_replace('/\s+/', '', $shop->name).'_'.time();
+                $folder = '/shops/'.$shop->id.'/';
                 Helper::uploadOne($request->file('image'), $folder, 'public', $name);
 
-                $filePath = $folder . $name . '.' . $request->file('image')->clientExtension();
+                $filePath = $folder.$name.'.'.$request->file('image')->clientExtension();
                 Shop::find($shop->id)->update(['image' => $filePath]);
             }
 
@@ -174,15 +179,17 @@ class ShopController extends Controller
                         'shop_id' => $shop->id,
                         'product_id' => $product['product_id'],
                         'stock_qty' => $product['qty'],
-                        'price' => $product['price']
+                        'price' => $product['price'],
                     ]);
                 }
             }
 
             $message = 'Shop details updated successfully!';
+
             return redirect()->route('shops.index')->with('alert-success', $message);
         } else {
             $message = 'Shop not found';
+
             return redirect()->back()->with('alert-error', $message);
         }
     }
@@ -193,12 +200,13 @@ class ShopController extends Controller
     public function destroy(string $id)
     {
         $shop = Shop::find($id);
-        if (!$shop) {
+        if (! $shop) {
             return response()->json(['message' => 'Shop not found.'], 404);
         }
         ShopAddress::where('shop_id', $id)->delete();
         ShopProduct::where('shop_id', $id)->delete();
         $shop->delete();
+
         return response()->json(['message' => 'Shop deleted successfully.']);
     }
 
@@ -206,15 +214,15 @@ class ShopController extends Controller
     {
         $searchTerm = $request->input('search');
         if ($searchTerm) {
-            $shops = Shop::where('name', 'like', '%' . $searchTerm . '%')
+            $shops = Shop::where('name', 'like', '%'.$searchTerm.'%')
                 ->orWhereHas('address', function ($query) use ($searchTerm) {
-                    $query->where('area', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('city', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('country', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('pincode', 'like', '%' . $searchTerm . '%');
+                    $query->where('area', 'like', '%'.$searchTerm.'%')
+                        ->orWhere('city', 'like', '%'.$searchTerm.'%')
+                        ->orWhere('country', 'like', '%'.$searchTerm.'%')
+                        ->orWhere('pincode', 'like', '%'.$searchTerm.'%');
                 })
                 ->orWhereHas('products', function ($query) use ($searchTerm) {
-                    $query->where('name', 'like', '%' . $searchTerm . '%')
+                    $query->where('name', 'like', '%'.$searchTerm.'%')
                         ->whereHas('shops.product', function ($pivotQuery) {
                             $pivotQuery->where('stock_qty', '>', 0);
                         });
@@ -223,10 +231,11 @@ class ShopController extends Controller
             $response = [
                 'success' => true,
                 'data' => [
-                    'html' => $returnHTML
+                    'html' => $returnHTML,
                 ],
-                'message' => 'shop list fetched successfully.'
+                'message' => 'shop list fetched successfully.',
             ];
+
             return response($response);
         } else {
             return response()->json(['message' => 'no search found.'], 404);

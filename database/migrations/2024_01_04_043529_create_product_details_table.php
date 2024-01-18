@@ -17,14 +17,14 @@ return new class extends Migration
             $table->string('brand');
             $table->string('price');
             $table->string('weight');
-            $table->tinyInteger('return_policy')->default(0)->comment("[0=>None, 1=>7Days, 2=>10ays, 3=>15Days]");
+            $table->tinyInteger('return_policy')->default(0)->comment('[0=>None, 1=>7Days, 2=>10ays, 3=>15Days]');
             $table->string('length')->nullable();
             $table->string('width')->nullable();
             $table->string('breadth')->nullable();
             $table->string('ships_from')->nullable();
             $table->string('ship_by')->nullable();
             $table->string('import_fees')->nullable();
-            $table->tinyInteger('state')->default(0)->comment("[0=>New, 1=>Refurbished]");
+            $table->tinyInteger('state')->default(0)->comment('[0=>New, 1=>Refurbished]');
             $table->timestamps();
         });
     }

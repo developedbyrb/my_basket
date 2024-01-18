@@ -20,7 +20,7 @@
             </div>
 
             <div>
-                @include('layouts.common.dynamic-address')
+                @include('layouts.common.dynamic-address', ['addMore' => true])
             </div>
 
             <x-form-footer :cancelRoute="__('warehouses.index')" />

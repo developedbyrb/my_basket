@@ -34,7 +34,7 @@ class StoreShopRequest extends FormRequest
             'addresses.*.alias' => ['required', 'string', 'max:100'],
             'products.*.product_id' => 'required',
             'products.*.qty' => 'required',
-            'products.*.price' => 'required'
+            'products.*.price' => 'required',
         ];
     }
 
@@ -53,7 +53,7 @@ class StoreShopRequest extends FormRequest
             'addresses.*.pincode.required' => 'Please enter a pincode address #:position.',
             'addresses.*.state.required' => 'Please enter a state address #:position.',
             'addresses.*.country.required' => 'Please enter a country address #:position.',
-            'addresses.*.alias.required' => 'Please enter an alias address  #:position.'
+            'addresses.*.alias.required' => 'Please enter an alias address  #:position.',
         ];
     }
 }

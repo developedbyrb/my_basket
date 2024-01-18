@@ -15,6 +15,7 @@ class WarehouseController extends Controller
     public function index()
     {
         $warehouses = Warehouse::where('owner', Auth::id())->get();
+
         return view('warehouse.index', compact('warehouses'));
     }
 
@@ -31,7 +32,15 @@ class WarehouseController extends Controller
      */
     public function store(StoreWarehouseRequest $request)
     {
-        dd($request->validated());
+        $validatedData = $request->validated();
+        Warehouse::create([
+            'name' => $validatedData['name'],
+            'owner' => Auth::id(),
+        ]);
+
+        $message = 'Warehouse created successfully.';
+
+        return redirect()->route('warehouses.index')->with('alert-success', $message);
     }
 
     /**

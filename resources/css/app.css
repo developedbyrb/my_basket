@@ -10,8 +10,7 @@
     }
 }
 
-@layer components {
-}
+@layer components {}
 
 @layer utilities {
     .no-scrollbar::-webkit-scrollbar {
@@ -19,13 +18,16 @@
     }
 
     .no-scrollbar {
-        -ms-overflow-style: none; /* IE and Edge */
-        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none;
+        /* IE and Edge */
+        scrollbar-width: none;
+        /* Firefox */
     }
 
     .chat-height {
         @apply h-[calc(100vh_-_8.125rem)] lg:h-[calc(100vh_-_5.625rem)];
     }
+
     .inbox-height {
         @apply h-[calc(100vh_-_8.125rem)] lg:h-[calc(100vh_-_5.625rem)];
     }
@@ -52,7 +54,7 @@
 }
 
 .modal-confirm-submit {
-    @apply text-white ml-2 inline-flex items-center bg-red-700 hover:bg-red-800 focus:ring-4  me-2 mb-2 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800;
+    @apply text-white ml-2 inline-flex items-center bg-red-700 hover:bg-red-800 focus:ring-4 me-2 mb-2 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800;
 }
 
 .custom-input-text {
@@ -120,7 +122,7 @@
 }
 
 .view-table-wrapper {
-    @apply w-full max-w-xl bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700;
+    @apply w-full bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700;
 }
 
 .table-caption {
@@ -156,7 +158,7 @@
 }
 
 .input-with-icon {
-    @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+    @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
 }
 
 .toast-close {
@@ -220,7 +222,7 @@
 }
 
 .modal-submit-button {
-    @apply text-white ml-2 inline-flex items-center bg-green-700 hover:bg-green-800 focus:ring-4  me-2 mb-2 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-blue-800;
+    @apply text-white ml-2 inline-flex items-center bg-green-700 hover:bg-green-800 focus:ring-4 me-2 mb-2 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-blue-800;
 }
 
 .modal-cancel-button,
@@ -265,4 +267,18 @@
 
 .make-default-checkbox {
     @apply w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600
+}
+
+.checkout-button {
+    @apply flex w-full justify-center rounded-md bg-indigo-600 px-3 py-3 font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600
+}
+
+.myTextareaContainer {
+    position: relative;
+}
+
+#myOverlay {
+    position: absolute;
+    right: 25px;
+    bottom: 10px;
 }

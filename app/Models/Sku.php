@@ -17,7 +17,7 @@ class Sku extends Model
         'price',
         'is_default',
         'image',
-        'avail_stock'
+        'avail_stock',
     ];
 
     protected function price(): Attribute
@@ -36,5 +36,15 @@ class Sku extends Model
     public function attributeOptions(): BelongsToMany
     {
         return $this->belongsToMany(AttributeOption::class, 'attribute_option_skus');
+    }
+
+    public function warehouses(): BelongsToMany
+    {
+        return $this->belongsToMany(Warehouse::class, 'warehouse_products');
+    }
+
+    public function shopProduct()
+    {
+        return $this->hasOne(ShopProduct::class);
     }
 }

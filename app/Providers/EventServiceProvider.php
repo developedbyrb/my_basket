@@ -3,9 +3,13 @@
 namespace App\Providers;
 
 use App\Models\Attribute;
+use App\Models\Order;
 use App\Models\Product;
+use App\Models\Warehouse;
 use App\Observers\AttributeObserver;
+use App\Observers\OrderObserver;
 use App\Observers\ProductObserver;
+use App\Observers\WarehouseObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -46,6 +50,8 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $observers = [
         Attribute::class => [AttributeObserver::class],
-        Product::class => [ProductObserver::class]
+        Product::class => [ProductObserver::class],
+        Warehouse::class => [WarehouseObserver::class],
+        Order::class => [OrderObserver::class],
     ];
 }

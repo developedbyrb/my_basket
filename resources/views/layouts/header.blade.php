@@ -69,20 +69,23 @@
                     <!-- Dark Mode Toggler -->
                 </li>
 
-                <li class="relative">
-                    <a href="{{ route('products.viewCart') }}"
-                        class="relative flex h-8.5 w-8.5 items-center justify-center rounded-full border-[0.5px] border-stroke bg-gray hover:text-primary dark:border-strokedark dark:bg-meta-4 dark:text-white">
-                        <x-cart-svg />
-                        <span class="sr-only">Cart Items</span>
-                        @if (Auth::user() &&
-                                Auth::user()->cartItems()->count())
-                            <div
-                                class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900">
-                                {{ Auth::user()->cartItems()->count() }}</div>
-                        @endif
-                    </a>
-                </li>
-
+                @if (
+                    \Helper::hasPermissionToView('create-cart-items', false) ||
+                        \Helper::hasPermissionToView('buy-bulk-products', false))
+                    <li class="relative">
+                        <a href="{{ route('cartItems.index') }}"
+                            class="relative flex h-8.5 w-8.5 items-center justify-center rounded-full border-[0.5px] border-stroke bg-gray hover:text-primary dark:border-strokedark dark:bg-meta-4 dark:text-white">
+                            <x-cart-svg />
+                            <span class="sr-only">Cart Items</span>
+                            @if (Auth::user() &&
+                                    Auth::user()->cartItems()->count())
+                                <div
+                                    class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900">
+                                    {{ Auth::user()->cartItems()->count() }}</div>
+                            @endif
+                        </a>
+                    </li>
+                @endif
 
                 <!-- Notification Menu Area -->
                 {{-- <li class="relative" x-data="{ dropdownOpen: false, notifying: true }" @click.outside="dropdownOpen = false">
